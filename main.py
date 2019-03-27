@@ -194,80 +194,21 @@ class Blocs:
 
 
 class Board:
-    obstacles = {}
+    obstacles = []
 
     def __init__(self, **blocs):
         for key, value in blocs.items():
-            setattr(Blocs, key, value)
+
+            setattr(self, key, Blocs(value[0:2], value[2:4]))
+            getattr(self, key)
+            Board.obstacles.append(key)
+            # setattr(Blocs, key, value)
             print(key, value)
 
-        print("yolo")
 
-
-test = Board(bloctest=[1, 2, 3], bloctest2=[1, 2, 3])
-# def down_1(e):
-#     return (Blocs.move_down(bloc_1, e))
-
-
-# def down_2(e):
-#     return (Blocs.move_down(bloc_2, e))
-
-
-# def down_3(e):
-#     return (Blocs.move_down(bloc_3, e))
-
-
-# def down_4(e):
-#     return (Blocs.move_down(bloc_4, e))
-
-
-# def up_1(e):
-#     return (Blocs.move_up(bloc_1, e))
-
-
-# def up_2(e):
-#     return (Blocs.move_up(bloc_2, e))
-
-
-# def up_3(e):
-#     return (Blocs.move_up(bloc_4, e))
-
-
-# def up_4(e):
-#     return (Blocs.move_up(bloc_4, e))
-
-
-# def left_1(e):
-#     return (Blocs.move_left(bloc_1, e))
-
-
-# def left_2(e):
-#     return (Blocs.move_left(bloc_2, e))
-
-
-# def left_3(e):
-#     return (Blocs.move_left(bloc_3, e))
-
-
-# def left_4(e):
-#     return (Blocs.move_left(bloc_4, e))
-
-
-# def right_1(e):
-#     return (Blocs.move_right(bloc_1, e))
-
-
-# def right_2(e):
-#     return (Blocs.move_right(bloc_2, e))
-
-
-# def right_3(e):
-#     return (Blocs.move_right(bloc_3, e))
-
-
-# def right_4(e):
-#     return (Blocs.move_right(bloc_4, e))
-
+test = Board(bloctest=([1, 0, 1, 1]), bloctest2=([0, 2, 1, 2]))
+print(Board.obstacles)
+# getattr(Board, "bloctest")
 # Obstables
 bloc_1 = Blocs([1, 0], [1, 1])
 bloc_2 = Blocs([0, 2], [1, 2])
@@ -313,15 +254,17 @@ def possible_moves(e):
 
 print(possible_moves(etat_initial))
 show_board(etat_initial)
-Blocs.move_left(bloc_3, etat_initial)
-print(possible_moves(etat_initial))
-show_board(etat_initial)
-Blocs.move_left(bloc_3, etat_initial)
-print(possible_moves(etat_initial))
-show_board(etat_initial)
-Blocs.move_left(bloc_4, etat_initial)
-print(possible_moves(etat_initial))
-show_board(etat_initial)
+# Blocs.move_left(bloc_3, etat_initial)
+# print(possible_moves(etat_initial))
+# show_board(etat_initial)
+# Blocs.move_left(bloc_3, etat_initial)
+# print(possible_moves(etat_initial))
+# show_board(etat_initial)
+# Blocs.move_left(bloc_4, etat_initial)
+# print(possible_moves(etat_initial))
+# show_board(etat_initial)
+
+
 # show_board(left_3(etat_initial))
 # show_board(left_3(etat_initial))
 # show_board(down_2(etat_initial))
