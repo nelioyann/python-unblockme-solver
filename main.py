@@ -125,7 +125,7 @@ class Blocs:
 
     def precond_down(self, e):
         # Verifier que le bloc en dessous du 2eme bloc est un 0
-        f_line, f_col, s_line, s_col = self.fullbloc
+        _, f_col, s_line, s_col = self.fullbloc
         if (s_line == len(e) - 1) or (f_col != s_col):
             #print("Deplacement vers le bas impossible du bloc", self.codage)
             return False
@@ -139,7 +139,7 @@ class Blocs:
 
     def precond_right(self, e):
         # Verifier que le bloc qui suit le 2eme bloc est un 0
-        f_line, f_col, s_line, s_col = self.fullbloc
+        f_line, _, s_line, s_col = self.fullbloc
         if (s_col == len(e) - 1) or (f_line != s_line):
             #print("Deplacement vers la droite impossible du bloc(orientation)", self.codage)
             return False
@@ -153,7 +153,7 @@ class Blocs:
 
     def precond_up(self, e):
         # Verifier que le bloc avant le 1er bloc est un 0
-        f_line, f_col, s_line, s_col = self.fullbloc
+        f_line, f_col, _, s_col = self.fullbloc
         if (f_line == 0) or (f_col != s_col):
             #print("Deplacement vers le haut impossible du bloc", self.codage)
             return False
@@ -167,7 +167,7 @@ class Blocs:
 
     def precond_left(self, e):
         # Verifier que le bloc avant le 1er bloc est un 0
-        f_line, f_col, s_line, s_col = self.fullbloc
+        f_line, f_col, s_line, _ = self.fullbloc
         if (f_col == 0) or (f_line != s_line):
             #print("Deplacement vers la gauche impossible du bloc", self.codage)
             return False
@@ -197,76 +197,78 @@ class Board:
     obstacles = {}
 
     def __init__(self, **blocs):
-        for key, value in blocs.iteritems():
-            obstacles[key] = Blocs()
+        for key, value in blocs.items():
+            setattr(Blocs, key, value)
+            print(key, value)
 
         print("yolo")
 
 
-def down_1(e):
-    return (Blocs.move_down(bloc_1, e))
+test = Board(bloctest=[1, 2, 3], bloctest2=[1, 2, 3])
+# def down_1(e):
+#     return (Blocs.move_down(bloc_1, e))
 
 
-def down_2(e):
-    return (Blocs.move_down(bloc_2, e))
+# def down_2(e):
+#     return (Blocs.move_down(bloc_2, e))
 
 
-def down_3(e):
-    return (Blocs.move_down(bloc_3, e))
+# def down_3(e):
+#     return (Blocs.move_down(bloc_3, e))
 
 
-def down_4(e):
-    return (Blocs.move_down(bloc_4, e))
+# def down_4(e):
+#     return (Blocs.move_down(bloc_4, e))
 
 
-def up_1(e):
-    return (Blocs.move_up(bloc_1, e))
+# def up_1(e):
+#     return (Blocs.move_up(bloc_1, e))
 
 
-def up_2(e):
-    return (Blocs.move_up(bloc_2, e))
+# def up_2(e):
+#     return (Blocs.move_up(bloc_2, e))
 
 
-def up_3(e):
-    return (Blocs.move_up(bloc_4, e))
+# def up_3(e):
+#     return (Blocs.move_up(bloc_4, e))
 
 
-def up_4(e):
-    return (Blocs.move_up(bloc_4, e))
+# def up_4(e):
+#     return (Blocs.move_up(bloc_4, e))
 
 
-def left_1(e):
-    return (Blocs.move_left(bloc_1, e))
+# def left_1(e):
+#     return (Blocs.move_left(bloc_1, e))
 
 
-def left_2(e):
-    return (Blocs.move_left(bloc_2, e))
+# def left_2(e):
+#     return (Blocs.move_left(bloc_2, e))
 
 
-def left_3(e):
-    return (Blocs.move_left(bloc_3, e))
+# def left_3(e):
+#     return (Blocs.move_left(bloc_3, e))
 
 
-def left_4(e):
-    return (Blocs.move_left(bloc_4, e))
+# def left_4(e):
+#     return (Blocs.move_left(bloc_4, e))
 
 
-def right_1(e):
-    return (Blocs.move_right(bloc_1, e))
+# def right_1(e):
+#     return (Blocs.move_right(bloc_1, e))
 
 
-def right_2(e):
-    return (Blocs.move_right(bloc_2, e))
+# def right_2(e):
+#     return (Blocs.move_right(bloc_2, e))
 
 
-def right_3(e):
-    return (Blocs.move_right(bloc_3, e))
+# def right_3(e):
+#     return (Blocs.move_right(bloc_3, e))
 
 
-def right_4(e):
-    return (Blocs.move_right(bloc_4, e))
+# def right_4(e):
+#     return (Blocs.move_right(bloc_4, e))
 
-    # Obstables
+# Obstables
 bloc_1 = Blocs([1, 0], [1, 1])
 bloc_2 = Blocs([0, 2], [1, 2])
 bloc_3 = Blocs([2, 2], [2, 3])
@@ -311,13 +313,13 @@ def possible_moves(e):
 
 print(possible_moves(etat_initial))
 show_board(etat_initial)
-left_3(etat_initial)
+Blocs.move_left(bloc_3, etat_initial)
 print(possible_moves(etat_initial))
 show_board(etat_initial)
-left_3(etat_initial)
+Blocs.move_left(bloc_3, etat_initial)
 print(possible_moves(etat_initial))
 show_board(etat_initial)
-left_4(etat_initial)
+Blocs.move_left(bloc_4, etat_initial)
 print(possible_moves(etat_initial))
 show_board(etat_initial)
 # show_board(left_3(etat_initial))
