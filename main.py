@@ -1,5 +1,23 @@
 # 15/03/19
 # Projet Unblock Me, IA
+# Algorithme recherche_en_largeur
+# Début
+#   ouverts = { état initial } ; fermés = vide ; succès = faux
+#   Tant que (ouverts non vide) et (non succès) faire
+#       n = noeud_choisi(ouverts)
+#       Si est_final(n) Alors succès=vrai
+#       Sinon ouverts = ouverts privé de n
+#           fermés = fermés + n
+#           Pour chaque successeurs s de n faire
+#               Si (s n’est ni dans ouverts ni dans fermés) Alors
+#                   ouverts = ouverts + s
+#                   père(s) = n
+#               Fin si
+#           Fin pour
+#       Fin si
+#   Fin TQ
+# Fin
+
 
 empty_board = [	[0, 0, 0, 0],
                 [0, 0, 0, 0],
@@ -170,6 +188,19 @@ class Blocs:
         # Afficher la matrice
         print("Ajout du bloc", self.codage)
         show_board(matrice)
+
+# Matrice?board
+# TODO Prends des instances de bloc en entree et renvoie une matrice
+
+
+class Board:
+    obstacles = {}
+
+    def __init__(self, **blocs):
+        for key, value in blocs.iteritems():
+            obstacles[key] = Blocs()
+
+        print("yolo")
 
 
 def down_1(e):
