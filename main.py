@@ -17,7 +17,7 @@
 #       Fin si
 #   Fin TQ
 # Fin
-
+from functools import partial
 
 empty_board = [	[0, 0, 0, 0],
                 [0, 0, 0, 0],
@@ -189,25 +189,8 @@ class Blocs:
         print("Ajout du bloc", self.codage)
         show_board(matrice)
 
+
 # Matrice?board
-# TODO Prends des instances de bloc en entree et renvoie une matrice
-
-
-class Board:
-    obstacles = []
-
-    def __init__(self, **blocs):
-        for key, value in blocs.items():
-
-            setattr(self, key, Blocs(value[0:2], value[2:4]))
-            getattr(self, key)
-            Board.obstacles.append(key)
-            # setattr(Blocs, key, value)
-            print(key, value)
-
-
-test = Board(bloctest=([1, 0, 1, 1]), bloctest2=([0, 2, 1, 2]))
-print(Board.obstacles)
 # getattr(Board, "bloctest")
 # Obstables
 bloc_1 = Blocs([1, 0], [1, 1])
@@ -254,15 +237,15 @@ def possible_moves(e):
 
 print(possible_moves(etat_initial))
 show_board(etat_initial)
-# Blocs.move_left(bloc_3, etat_initial)
-# print(possible_moves(etat_initial))
-# show_board(etat_initial)
-# Blocs.move_left(bloc_3, etat_initial)
-# print(possible_moves(etat_initial))
-# show_board(etat_initial)
-# Blocs.move_left(bloc_4, etat_initial)
-# print(possible_moves(etat_initial))
-# show_board(etat_initial)
+Blocs.move_left(bloc_3, etat_initial)
+print(possible_moves(etat_initial))
+show_board(etat_initial)
+Blocs.move_left(bloc_3, etat_initial)
+print(possible_moves(etat_initial))
+show_board(etat_initial)
+Blocs.move_left(bloc_4, etat_initial)
+print(possible_moves(etat_initial))
+show_board(etat_initial)
 
 
 # show_board(left_3(etat_initial))
