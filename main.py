@@ -245,6 +245,6 @@ for bloc in [bloc_1, bloc_2, bloc_3, bloc_4]:
 # precond_left3 = Blocs.precond_left(bloc_3, etat_initial)
 
 print(recherche_en_profondeur_limitee(
-    etat_initial, est_final, operateurs_disponibles, 15))
+    etat_initial, est_final, operateurs_disponibles, 9))
 # print(recherche_en_profondeur_lim_mem(
 #     etat_initial, est_final, operateurs_disponibles, 5, []))
