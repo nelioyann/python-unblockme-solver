@@ -41,11 +41,20 @@ def show_board(e):
         print(ligne)
     print("---------------------------")
 
+
+def copie_matrice(m):
+    return [
+        [m[0][0], m[0][1], m[0][2], m[0][3]],
+        [m[1][0], m[1][1], m[1][2], m[1][3]],
+        [m[2][0], m[2][1], m[2][2], m[2][3]],
+        [m[3][0], m[3][1], m[3][2], m[3][3]]
+    ]
 # Bloque à déplacer
 
 
 class Blocs:
     codage = 0  # valeur qui represente l'instance du bloc dans la matrice
+    obstacles = []
     # Initialisation d'une instance composee de 2 petits blocs
     # Chaque petit bloc est une liste de coordonnees (x,y)
 
@@ -58,6 +67,7 @@ class Blocs:
         Blocs.codage += 1
         # Codage est la valeur qui sera utilise pour RPZ le bloc a l'interieur de la matrice
         self.codage = Blocs.codage
+        Blocs.obstacles.append(self)
 
         # Deplacement vers le bas du bloc self dans l'etat e
     def move_down(self, e):
@@ -196,32 +206,23 @@ class Blocs:
 # Obstables
 # Easy set
 bloc_1 = Blocs([1, 1], [1, 2])
-bloc_2 = Blocs([0, 0], [1, 0])
+bloc_2 = Blocs([0, 3], [1, 3])
 bloc_3 = Blocs([2, 2], [2, 3])
-bloc_4 = Blocs([3, 1], [3, 2])
-
-
-def copie_matrice(m):
-    return [
-        [m[0][0], m[0][1], m[0][2], m[0][3]],
-        [m[1][0], m[1][1], m[1][2], m[1][3]],
-        [m[2][0], m[2][1], m[2][2], m[2][3]],
-        [m[3][0], m[3][1], m[3][2], m[3][3]]
-    ]
+# bloc_4 = Blocs([3, 1], [3, 2])
 
 
 # ---------------------------------TEST---------------------------------
 # Initialisation
 etat_initial = copie_matrice(empty_board)
-Blocs.add_to_board(bloc_1, etat_initial)
-Blocs.add_to_board(bloc_2, etat_initial)
-Blocs.add_to_board(bloc_3, etat_initial)
-Blocs.add_to_board(bloc_4, etat_initial)
+# Rajout des blocs dans la matrice
+for bloc in Blocs.obstacles:
+    Blocs.add_to_board(bloc, etat_initial)
+    print("Bloc n° ", bloc.codage)
 
 
 # Operateurs disponibles
 operateurs_disponibles = []
-for bloc in [bloc_1, bloc_2, bloc_3, bloc_4]:
+for bloc in Blocs.obstacles:
     # nom prrecond effet
     op = nouvel_operateur(
         "move down bloc"+str(bloc.codage), partial(Blocs.precond_down, bloc), partial(Blocs.move_down, bloc))
@@ -236,10 +237,6 @@ for bloc in [bloc_1, bloc_2, bloc_3, bloc_4]:
         Blocs.precond_right, bloc), partial(Blocs.move_right, bloc))
     operateurs_disponibles.append(op)
 
-# DEplacement des blocs
-# precond_left3 = Blocs.precond_left(bloc_3, etat_initial)
 
 print(recherche_en_profondeur_limitee(
-    etat_initial, est_final, operateurs_disponibles, 8))
-# print(recherche_en_profondeur_lim_mem(
-#     etat_initial, est_final, operateurs_disponibles, 5, []))
+    etat_initial, est_final, operateurs_disponibles, 6))
