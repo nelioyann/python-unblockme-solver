@@ -195,15 +195,10 @@ class Blocs:
 # getattr(Board, "bloctest")
 # Obstables
 # Easy set
-# bloc_1 = Blocs([1, 1], [1, 2])
-# bloc_2 = Blocs([0, 0], [1, 0])
-# bloc_3 = Blocs([2, 2], [2, 3])
-# bloc_4 = Blocs([3, 1], [3, 2])
-# Medium set
-bloc_1 = Blocs([1, 0], [1, 1])
-bloc_2 = Blocs([0, 2], [1, 2])
+bloc_1 = Blocs([1, 1], [1, 2])
+bloc_2 = Blocs([0, 0], [1, 0])
 bloc_3 = Blocs([2, 2], [2, 3])
-bloc_4 = Blocs([3, 0], [3, 1])
+bloc_4 = Blocs([3, 1], [3, 2])
 
 
 def copie_matrice(m):
@@ -245,6 +240,6 @@ for bloc in [bloc_1, bloc_2, bloc_3, bloc_4]:
 # precond_left3 = Blocs.precond_left(bloc_3, etat_initial)
 
 print(recherche_en_profondeur_limitee(
-    etat_initial, est_final, operateurs_disponibles, 9))
+    etat_initial, est_final, operateurs_disponibles, 8))
 # print(recherche_en_profondeur_lim_mem(
 #     etat_initial, est_final, operateurs_disponibles, 5, []))
