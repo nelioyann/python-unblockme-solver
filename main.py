@@ -199,10 +199,11 @@ class Blocs:
 # bloc_2 = Blocs([0, 0], [1, 0])
 # bloc_3 = Blocs([2, 2], [2, 3])
 # bloc_4 = Blocs([3, 1], [3, 2])
-bloc_1 = Blocs([1, 1], [1, 2])
-bloc_2 = Blocs([0, 0], [1, 0])
+# Medium set
+bloc_1 = Blocs([1, 0], [1, 1])
+bloc_2 = Blocs([0, 2], [1, 2])
 bloc_3 = Blocs([2, 2], [2, 3])
-bloc_4 = Blocs([3, 1], [3, 2])
+bloc_4 = Blocs([3, 0], [3, 1])
 
 
 def copie_matrice(m):
@@ -221,21 +222,6 @@ Blocs.add_to_board(bloc_1, etat_initial)
 Blocs.add_to_board(bloc_2, etat_initial)
 Blocs.add_to_board(bloc_3, etat_initial)
 Blocs.add_to_board(bloc_4, etat_initial)
-
-
-# Renvoie les mouvements possibles de chaque bloc
-# def possible_moves(e):
-#     moves_list = []
-#     for bloc in [bloc_1, bloc_2, bloc_3, bloc_4]:
-#         if (Blocs.precond_down(bloc, e)):
-#             moves_list.append(partial(Blocs.move_down, bloc))
-#         if (Blocs.precond_left(bloc, e)):
-#             moves_list.append(partial(Blocs.move_left, bloc))
-#         if (Blocs.precond_right(bloc, e)):
-#             moves_list.append(partial(Blocs.move_right, bloc))
-#         if (Blocs.precond_up(bloc, e)):
-#             moves_list.append(partial(Blocs.move_up, bloc))
-#     return moves_list
 
 
 # Operateurs disponibles
@@ -258,41 +244,7 @@ for bloc in [bloc_1, bloc_2, bloc_3, bloc_4]:
 # DEplacement des blocs
 # precond_left3 = Blocs.precond_left(bloc_3, etat_initial)
 
-print(recherche_en_profondeur_lim_mem(
-    etat_initial, est_final, operateurs_disponibles, 10, []))
-# print(make_op(etat_initial))
-# print(possible_moves(etat_initial))
-# show_board(etat_initial)
-# Blocs.move_left(bloc_3, etat_initial)
-# print(possible_moves(etat_initial))
-# show_board(etat_initial)
-# Blocs.move_left(bloc_3, etat_initial)
-# print(possible_moves(etat_initial))
-# show_board(etat_initial)
-# Blocs.move_left(bloc_4, etat_initial)
-# print(possible_moves(etat_initial))
-# show_board(etat_initial)
-
-
-# show_board(left_3(etat_initial))
-# show_board(left_3(etat_initial))
-# show_board(down_2(etat_initial))
-# show_board(right_1(etat_initial))
-# show_board(right_1(etat_initial))
-
-
-# Operateurs disponibles
-# operateurs_disponibles = [
-#     nouvel_operateur("down_1", precond, down_1),
-#     nouvel_operateur("down_2", precond, down_2),
-#     nouvel_operateur("down_3", precond, down_3),
-#     nouvel_operateur("up_1", precond, up_1),
-#     nouvel_operateur("up_2", precond, up_2),
-#     nouvel_operateur("up_3", precond, up_3),
-#     nouvel_operateur("left_1", precond, left_1),
-#     nouvel_operateur("left_2", precond, left_2),
-#     nouvel_operateur("left_3", precond, left_3),
-#     nouvel_operateur("right_1", precond, right_1),
-#     nouvel_operateur("right_2", precond, right_2),
-#     nouvel_operateur("right_3", precond, right_3),
-# ]
+print(recherche_en_profondeur_limitee(
+    etat_initial, est_final, operateurs_disponibles, 15))
+# print(recherche_en_profondeur_lim_mem(
+#     etat_initial, est_final, operateurs_disponibles, 5, []))
