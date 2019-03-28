@@ -18,6 +18,7 @@
 #   Fin TQ
 # Fin
 from functools import partial
+from resolution import *
 
 empty_board = [	[0, 0, 0, 0],
                 [0, 0, 0, 0],
@@ -193,8 +194,13 @@ class Blocs:
 # Matrice?board
 # getattr(Board, "bloctest")
 # Obstables
-bloc_1 = Blocs([1, 0], [1, 1])
-bloc_2 = Blocs([0, 2], [1, 2])
+# Easy set
+# bloc_1 = Blocs([1, 1], [1, 2])
+# bloc_2 = Blocs([0, 0], [1, 0])
+# bloc_3 = Blocs([2, 2], [2, 3])
+# bloc_4 = Blocs([3, 1], [3, 2])
+bloc_1 = Blocs([1, 1], [1, 2])
+bloc_2 = Blocs([0, 0], [1, 0])
 bloc_3 = Blocs([2, 2], [2, 3])
 bloc_4 = Blocs([3, 1], [3, 2])
 
@@ -218,34 +224,54 @@ Blocs.add_to_board(bloc_4, etat_initial)
 
 
 # Renvoie les mouvements possibles de chaque bloc
-def possible_moves(e):
-    moves_list = []
-    for bloc in [bloc_1, bloc_2, bloc_3, bloc_4]:
-        if (Blocs.precond_down(bloc, e)):
-            moves_list.append("down_"+str(bloc.codage))
-        if (Blocs.precond_left(bloc, e)):
-            moves_list.append("left_"+str(bloc.codage))
-        if (Blocs.precond_right(bloc, e)):
-            moves_list.append("right_"+str(bloc.codage))
-        if (Blocs.precond_up(bloc, e)):
-            moves_list.append("up_"+str(bloc.codage))
-    return moves_list
+# def possible_moves(e):
+#     moves_list = []
+#     for bloc in [bloc_1, bloc_2, bloc_3, bloc_4]:
+#         if (Blocs.precond_down(bloc, e)):
+#             moves_list.append(partial(Blocs.move_down, bloc))
+#         if (Blocs.precond_left(bloc, e)):
+#             moves_list.append(partial(Blocs.move_left, bloc))
+#         if (Blocs.precond_right(bloc, e)):
+#             moves_list.append(partial(Blocs.move_right, bloc))
+#         if (Blocs.precond_up(bloc, e)):
+#             moves_list.append(partial(Blocs.move_up, bloc))
+#     return moves_list
+
+
+# Operateurs disponibles
+operateurs_disponibles = []
+for bloc in [bloc_1, bloc_2, bloc_3, bloc_4]:
+    # nom prrecond effet
+    op = nouvel_operateur(
+        "move down bloc"+str(bloc.codage), partial(Blocs.precond_down, bloc), partial(Blocs.move_down, bloc))
+    operateurs_disponibles.append(op)
+    op = nouvel_operateur(
+        "move up bloc"+str(bloc.codage), partial(Blocs.precond_up, bloc), partial(Blocs.move_up, bloc))
+    operateurs_disponibles.append(op)
+    op = nouvel_operateur(
+        "move left bloc"+str(bloc.codage), partial(Blocs.precond_left, bloc), partial(Blocs.move_left, bloc))
+    operateurs_disponibles.append(op)
+    op = nouvel_operateur("move right bloc"+str(bloc.codage), partial(
+        Blocs.precond_right, bloc), partial(Blocs.move_right, bloc))
+    operateurs_disponibles.append(op)
 
 # DEplacement des blocs
 # precond_left3 = Blocs.precond_left(bloc_3, etat_initial)
 
-
-print(possible_moves(etat_initial))
-show_board(etat_initial)
-Blocs.move_left(bloc_3, etat_initial)
-print(possible_moves(etat_initial))
-show_board(etat_initial)
-Blocs.move_left(bloc_3, etat_initial)
-print(possible_moves(etat_initial))
-show_board(etat_initial)
-Blocs.move_left(bloc_4, etat_initial)
-print(possible_moves(etat_initial))
-show_board(etat_initial)
+print(recherche_en_profondeur_lim_mem(
+    etat_initial, est_final, operateurs_disponibles, 10, []))
+# print(make_op(etat_initial))
+# print(possible_moves(etat_initial))
+# show_board(etat_initial)
+# Blocs.move_left(bloc_3, etat_initial)
+# print(possible_moves(etat_initial))
+# show_board(etat_initial)
+# Blocs.move_left(bloc_3, etat_initial)
+# print(possible_moves(etat_initial))
+# show_board(etat_initial)
+# Blocs.move_left(bloc_4, etat_initial)
+# print(possible_moves(etat_initial))
+# show_board(etat_initial)
 
 
 # show_board(left_3(etat_initial))
