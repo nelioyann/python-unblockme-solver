@@ -1,22 +1,6 @@
 # 15/03/19
 # Projet Unblock Me, IA
-# Algorithme recherche_en_largeur
-# Début
-#   ouverts = { état initial } ; fermés = vide ; succès = faux
-#   Tant que (ouverts non vide) et (non succès) faire
-#       n = noeud_choisi(ouverts)
-#       Si est_final(n) Alors succès=vrai
-#       Sinon ouverts = ouverts privé de n
-#           fermés = fermés + n
-#           Pour chaque successeurs s de n faire
-#               Si (s n’est ni dans ouverts ni dans fermés) Alors
-#                   ouverts = ouverts + s
-#                   père(s) = n
-#               Fin si
-#           Fin pour
-#       Fin si
-#   Fin TQ
-# Fin
+
 from functools import partial
 from resolution import *
 
@@ -196,9 +180,6 @@ class Blocs:
         f_line, f_col, s_line, s_col = self.fullbloc
         matrice[f_line][f_col] = self.codage
         matrice[s_line][s_col] = self.codage
-        # Afficher la matrice
-        print("Ajout du bloc", self.codage)
-        show_board(matrice)
 
 
 # Matrice?board
@@ -217,7 +198,7 @@ etat_initial = copie_matrice(empty_board)
 # Rajout des blocs dans la matrice
 for bloc in Blocs.obstacles:
     Blocs.add_to_board(bloc, etat_initial)
-    print("Bloc n° ", bloc.codage)
+    print(f"Bloc n°  {bloc.codage} rajouté dans la matrice")
 
 
 # Operateurs disponibles
@@ -237,6 +218,6 @@ for bloc in Blocs.obstacles:
         Blocs.precond_right, bloc), partial(Blocs.move_right, bloc))
     operateurs_disponibles.append(op)
 
-
+show_board(etat_initial)
 print(recherche_en_profondeur_limitee(
     etat_initial, est_final, operateurs_disponibles, 6))

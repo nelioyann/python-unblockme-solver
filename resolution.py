@@ -1,100 +1,140 @@
 
 # construction d'un nouvel opérateur
-def nouvel_operateur (nom,precond,effet):
-    return (nom,precond,effet)
+
+
+def nouvel_operateur(nom, precond, effet):
+    return (nom, precond, effet)
 
 # accès aux éléments d'un opérateur
-def nom_operateur (o):
+
+
+def nom_operateur(o):
     return o[0]
-def precond_operateur (o):
+
+
+def precond_operateur(o):
     return o[1]
-def action_operateur (o):
+
+
+def action_operateur(o):
     return o[2]
 
 # est-ce qu'un opérateur o est applicable à un état e ?
-def operateur_applicable (o,e):
+
+
+def operateur_applicable(o, e):
     precond = precond_operateur(o)
     return (precond(e))
 
 # sélection des opérateurs de os qui sont applicables à e
-def operateurs_applicables (os,e):
+
+
+def operateurs_applicables(os, e):
     res = []
     for o in os:
-        if operateur_applicable(o,e):
+        if operateur_applicable(o, e):
             res.append(o)
     return res
 
 
 # application d'un opérateur o à un état e
-def applique_operateur (o,e):
+def applique_operateur(o, e):
     action = action_operateur(o)
     return (action(e))
 
 
 # recherche en profondeur brutale : boucle à l'infini le plus souvent
-def recherche_en_profondeur (e,est_final,os):
+def recherche_en_profondeur(e, est_final, os):
     if est_final(e):
         return []
     else:
-        operateurs = operateurs_applicables(os,e)
+        operateurs = operateurs_applicables(os, e)
         for o in operateurs:
-            #print(nom_operateur(o))
-            ne = applique_operateur(o,e)
-            chemin = recherche_en_profondeur(ne,est_final,os)
+            # print(nom_operateur(o))
+            ne = applique_operateur(o, e)
+            chemin = recherche_en_profondeur(ne, est_final, os)
             if chemin != None:
-                return [ nom_operateur(o) ] + chemin
+                return [nom_operateur(o)] + chemin
         return None
 
 
 # recherche en profondeur limitée
-def recherche_en_profondeur_limitee (e,est_final,os,profondeur):
+def recherche_en_profondeur_limitee(e, est_final, os, profondeur):
     if est_final(e):
         return []
     elif profondeur == 0:
         return None
     else:
-        operateurs = operateurs_applicables(os,e)
+        operateurs = operateurs_applicables(os, e)
         for o in operateurs:
-            ne = applique_operateur(o,e)
-            chemin = recherche_en_profondeur_limitee(ne,est_final,os,profondeur-1)
+            ne = applique_operateur(o, e)
+            chemin = recherche_en_profondeur_limitee(
+                ne, est_final, os, profondeur-1)
             if chemin != None:
-                return [ nom_operateur(o) ] + chemin
+                return [nom_operateur(o)] + chemin
         return None
 
 
 # recherche avec mémoire
-def recherche_en_profondeur_memoire (e,est_final,os,déjà):
+def recherche_en_profondeur_memoire(e, est_final, os, déjà):
     if est_final(e):
         return []
     elif e in déjà:
         return None
     else:
         déjà.append(e)
-        operateurs = operateurs_applicables(os,e)
+        operateurs = operateurs_applicables(os, e)
         for o in operateurs:
-            ne = applique_operateur(o,e)
-            chemin = recherche_en_profondeur_memoire(ne,est_final,os,déjà)
+            ne = applique_operateur(o, e)
+            chemin = recherche_en_profondeur_memoire(ne, est_final, os, déjà)
             if chemin != None:
-                return [ nom_operateur(o) ] + chemin
+                return [nom_operateur(o)] + chemin
         return None
 
 
 # recherche en profondeur limitée et avec mémoire
-def recherche_en_profondeur_lim_mem (e,est_final,os,prof,déjà):
+def recherche_en_profondeur_lim_mem(e, est_final, os, prof, déjà):
     if est_final(e):
         return []
-    elif prof==0:
+    elif prof == 0:
         return None
     elif e in déjà:
         return None
     else:
         déjà.append(e)
-        operateurs = operateurs_applicables(os,e)
+        operateurs = operateurs_applicables(os, e)
         for o in operateurs:
-            ne = applique_operateur(o,e)
-            chemin = recherche_en_profondeur_lim_mem(ne,est_final,os,prof-1,déjà)
+            ne = applique_operateur(o, e)
+            chemin = recherche_en_profondeur_lim_mem(
+                ne, est_final, os, prof-1, déjà)
             if chemin != None:
-                return [ nom_operateur(o) ] + chemin
+                return [nom_operateur(o)] + chemin
         return None
 
 
+def recherche_en_largeur(e, est_final, os, fermés, succes):
+    #   ouverts = { état initial } ; fermés = vide ; succes = faux
+
+    #   Tant que (ouverts non vide) et (non succes) faire
+    ouverts = []
+    fermes = []
+    ouverts.append(e)
+    n = ouverts[0]
+    while (e != [] and not succes):
+        # Si est_final(n) Alors succès=vrai
+        if est_final(e):
+            return []
+        else:
+            # Sinon ouverts = ouverts privé de n
+            ouverts.remove(n)
+            #fermés = fermés + n
+            fermes.append(n)
+            #           Pour chaque successeurs s de n faire
+            #               Si (s n’est ni dans ouverts ni dans fermés) Alors
+            #                   ouverts = ouverts + s
+            #                   père(s) = n
+            #               Fin si
+            #           Fin pour
+            #       Fin si
+            #   Fin TQ
+            # Fin
