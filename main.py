@@ -52,14 +52,14 @@ def copie_matrice(m):
 # Bloque à déplacer
 
 
-show_board(final_test_1)
-print()
-show_board(copie_matrice(final_test_1))
+# show_board(final_test_1)
+# print()
+# show_board(copie_matrice(final_test_1))
 
 
 class Blocs:
     codage = 0  # valeur qui represente l'instance du bloc dans la matrice
-    obstacles = []
+    obstacles = []  # liste de toutes les instances
     # Initialisation d'une instance composee de 2 petits blocs
     # Chaque petit bloc est une liste de coordonnees (x,y)
 
