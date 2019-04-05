@@ -61,6 +61,9 @@ def recherche_en_profondeur(e, est_final, os):
 # recherche en profondeur limitée
 def recherche_en_profondeur_limitee(e, est_final, os, profondeur):
     if est_final(e):
+        print("etat final")
+        for l in (e):
+            print(l)
         return []
     elif profondeur == 0:
         return None
@@ -68,6 +71,9 @@ def recherche_en_profondeur_limitee(e, est_final, os, profondeur):
         operateurs = operateurs_applicables(os, e)
         for o in operateurs:
             ne = applique_operateur(o, e)
+            print("etat nouveau")
+            for l in (e):
+                print(l)
             chemin = recherche_en_profondeur_limitee(
                 ne, est_final, os, profondeur-1)
             if chemin != None:
@@ -78,16 +84,22 @@ def recherche_en_profondeur_limitee(e, est_final, os, profondeur):
 # recherche avec mémoire
 def recherche_en_profondeur_memoire(e, est_final, os, déjà):
     if est_final(e):
+
         return []
     elif e in déjà:
+        print("e in deja")
         return None
     else:
         déjà.append(e)
         operateurs = operateurs_applicables(os, e)
         for o in operateurs:
             ne = applique_operateur(o, e)
+            for l in ne:
+                print(l)
+            print()
             chemin = recherche_en_profondeur_memoire(ne, est_final, os, déjà)
             if chemin != None:
+                # print([nom_operateur(o)] + chemin)
                 return [nom_operateur(o)] + chemin
         return None
 
