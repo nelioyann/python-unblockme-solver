@@ -34,7 +34,7 @@ def operateurs_applicables(os, e):
     for o in os:
         if operateur_applicable(o, e):
             res.append(o)
-    print("#####")
+    print("")
     print("Liste des operateurs applicables à l'état suivant: ")
     for l in (e):
         print(l)
@@ -92,7 +92,6 @@ def recherche_en_profondeur_limitee(e, est_final, os, profondeur):
 # recherche avec mémoire
 def recherche_en_profondeur_memoire(e, est_final, os, déjà):
     if est_final(e):
-
         return []
     elif e in déjà:
         print("e in deja")

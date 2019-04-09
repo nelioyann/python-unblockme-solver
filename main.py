@@ -2,7 +2,7 @@
 # Projet Unblock Me, IA
 
 from functools import partial
-from resolution import recherche_en_profondeur_memoire, nouvel_operateur
+from resolution import recherche_en_profondeur_lim_mem, nouvel_operateur
 
 empty_board = [	[0, 0, 0, 0],
                 [0, 0, 0, 0],
@@ -82,6 +82,9 @@ class Blocs:
         f_line, f_col, s_line, s_col = self.fullbloc
         print(
             f"Position du pre-bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
+        print("Etat à instant t-1: ")
+        for l in (e):
+            print(l)
         # L'ancien deuxieme bloc devient le nouveau premier bloc
         self.first_bloc = [s_line, s_col]
         # Le bloc en dessous devient le nouveau deuxieme bloc
@@ -95,10 +98,19 @@ class Blocs:
         self.fullbloc = self.first_bloc + self.second_bloc
         print("Deplacement vers le bas du bloc", self.codage)
         print(
-            f"Position du bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
+            f"Pos dbloc {self.codage} = {self.first_bloc},{self.second_bloc}")
+        print("Primary line:", f_line)
+        print("Primary col:", f_col)
+        print("Secondary line:", s_line)
+        print("Secondary col:", s_col)
+        print("Etat à instant t: ")
+        for l in (tampon):
+            print(l)
         return (tampon)
+    print()
 
     def move_up(self, e):
+        print()
         f_line, f_col, s_line, s_col = self.fullbloc
         print(
             f"Position du pre-bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
@@ -117,9 +129,17 @@ class Blocs:
         print("Deplacement vers le haut du bloc", self.codage)
         print(
             f"Position du bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
-        return (tampon)
+        print("Primary line:", f_line)
+        print("Primary col:", f_col)
+        print("Secondary line:", s_line)
+        print("Secondary col:", s_col)
+        print("Etat à instant t: ")
+        board = copie_matrice(empty_board)
+        fill_board(Blocs.obstacles, board)
+        return (board)
 
     def move_right(self, e):
+        print()
         f_line, f_col, s_line, s_col = self.fullbloc
         print(
             f"Position du pre-bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
@@ -137,9 +157,17 @@ class Blocs:
         print("Deplacement vers la droite du bloc", self.codage)
         print(
             f"Position du bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
-        return (tampon)
+        print("Primary line:", f_line)
+        print("Primary col:", f_col)
+        print("Secondary line:", s_line)
+        print("Secondary col:", s_col)
+        print("Etat à instant t: ")
+        board = copie_matrice(empty_board)
+        fill_board(Blocs.obstacles, board)
+        return (board)
 
     def move_left(self, e):
+        print()
         f_line, f_col, s_line, s_col = self.fullbloc
         print(
             f"Position du pre-bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
@@ -159,7 +187,14 @@ class Blocs:
         print("Deplacement vers la gauche du bloc", self.codage)
         print(
             f"Position du bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
-        return (tampon)
+        print("Primary line:", f_line)
+        print("Primary col:", f_col)
+        print("Secondary line:", s_line)
+        print("Secondary col:", s_col)
+        print("Etat à instant t: ")
+        board = copie_matrice(empty_board)
+        fill_board(Blocs.obstacles, board)
+        return (board)
 
     def precond_down(self, e):
         # Verifier que le bloc en dessous du 2eme bloc est un 0
@@ -231,8 +266,8 @@ class Blocs:
 # getattr(Board, "bloctest")
 # Obstables
 # Easy set
-Blocs([1, 1], [1, 2])
-Blocs([0, 3], [1, 3])
+Blocs([1, 0], [1, 1])
+Blocs([2, 3], [3, 3])
 # Blocs([2, 1], [2, 2])
 # bloc_4 = Blocs([3, 1], [3, 2])
 
@@ -241,11 +276,18 @@ Blocs([0, 3], [1, 3])
 # Initialisation
 etat_initial = copie_matrice(empty_board)
 # Rajout des blocs dans la matrice
-for bloc in Blocs.obstacles:
-    Blocs.add_to_board(bloc, etat_initial)
-    print(f"Bloc n°  {bloc.codage} rajouté dans la matrice")
 
-show_board(etat_initial)
+
+def fill_board(obstacles, matrice):
+    for bloc in obstacles:
+        Blocs.add_to_board(bloc, matrice)
+    show_board(matrice)
+
+
+fill_board(Blocs.obstacles, etat_initial)
+# print(f"Bloc n°  {bloc.codage} rajouté dans la matrice")
+
+# show_board(etat_initial)
 
 # Operateurs disponibles
 operateurs_disponibles = []
@@ -279,7 +321,5 @@ for bloc in Blocs.obstacles:
 # show_board(Blocs.move_down(bloc_, etat_initial))
 
 
-print(recherche_en_profondeur_memoire(
-    etat_initial, est_final, operateurs_disponibles, 2))
-# print(recherche_en_profondeur_memoire(
-#     etat_initial, est_final, operateurs_disponibles, []))
+print(recherche_en_profondeur_lim_mem(
+    etat_initial, est_final, operateurs_disponibles, 2, []))
