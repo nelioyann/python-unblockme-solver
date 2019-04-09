@@ -31,6 +31,7 @@ final_test_3 = [[0, 0, 0, 0],
 
 def est_final(e):
     return (e[1][2:4] == [1, 1])
+    # return (e[1] == [1, 1, 0, 0])
 
 # * Test de la fonction
 # print(est_final(final_test_1))
@@ -80,59 +81,33 @@ class Blocs:
     def move_down(self, e):  # * RAS
                 # Enumeration des differentes coordonnees du bloc
         f_line, f_col, s_line, s_col = self.fullbloc
-        print(
-            f"Position du pre-bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
-        print("Etat à instant t-1: ")
-        for l in (e):
-            print(l)
+        # print(
+
         # L'ancien deuxieme bloc devient le nouveau premier bloc
         self.first_bloc = [s_line, s_col]
         # Le bloc en dessous devient le nouveau deuxieme bloc
         self.second_bloc = [s_line+1, s_col]
-        # Retirer le premier bloc de la matrice et laisser une case vide
-        tampon = copie_matrice(e)
-        tampon[f_line][f_col] = 0
-        # Rajouter le bloc a sa nouvelle position
-        tampon[s_line+1][s_col] = self.codage
         # Mise a jour du bloc complet
         self.fullbloc = self.first_bloc + self.second_bloc
         print("Deplacement vers le bas du bloc", self.codage)
-        print(
-            f"Pos dbloc {self.codage} = {self.first_bloc},{self.second_bloc}")
-        print("Primary line:", f_line)
-        print("Primary col:", f_col)
-        print("Secondary line:", s_line)
-        print("Secondary col:", s_col)
         print("Etat à instant t: ")
-        for l in (tampon):
-            print(l)
-        return (tampon)
-    print()
+        board = copie_matrice(empty_board)
+        fill_board(Blocs.obstacles, board)
+        return (board)
 
     def move_up(self, e):
         print()
         f_line, f_col, s_line, s_col = self.fullbloc
-        print(
-            f"Position du pre-bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
+        # print(
+        #     f"Position du pre-bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
         # L'ancien 1er bloc devient le nouveau 2eme bloc
         self.second_bloc = [f_line, f_col]
         # L'ancien 2e bloc se place au dessus du nouveau 2eme bloc
         self.first_bloc = [f_line-1, f_col]
-        # Retirer l'ancien second bloc de la matrice et laisser une case vide
-        tampon = copie_matrice(e)
-        tampon[s_line][s_col] = 0
-        # Rajouter le nouveau 1er bloc a sa nouvelle position
-        tampon[f_line-1][f_col] = self.codage
         # Mise a jour du bloc complet
         self.fullbloc = self.first_bloc + self.second_bloc
         # Afficher la matrice
         print("Deplacement vers le haut du bloc", self.codage)
-        print(
-            f"Position du bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
-        print("Primary line:", f_line)
-        print("Primary col:", f_col)
-        print("Secondary line:", s_line)
-        print("Secondary col:", s_col)
         print("Etat à instant t: ")
         board = copie_matrice(empty_board)
         fill_board(Blocs.obstacles, board)
@@ -141,26 +116,15 @@ class Blocs:
     def move_right(self, e):
         print()
         f_line, f_col, s_line, s_col = self.fullbloc
-        print(
-            f"Position du pre-bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
+        # print(
+        #     f"Position du pre-bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
         # Le deuxieme bloc devient le premier
         self.first_bloc = [s_line, s_col]
         # Le bloc a droite devient le deuxieme
         self.second_bloc = [s_line, s_col+1]
-        # Retirer le premier bloc de la matrice et laisser une case vide
-        tampon = copie_matrice(e)
-        tampon[f_line][f_col] = 0
-        # Rajouter le bloc a sa nouvelle position
-        tampon[s_line][s_col+1] = self.codage
         # Mise a jour du bloc complet
         self.fullbloc = self.first_bloc + self.second_bloc
         print("Deplacement vers la droite du bloc", self.codage)
-        print(
-            f"Position du bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
-        print("Primary line:", f_line)
-        print("Primary col:", f_col)
-        print("Secondary line:", s_line)
-        print("Secondary col:", s_col)
         print("Etat à instant t: ")
         board = copie_matrice(empty_board)
         fill_board(Blocs.obstacles, board)
@@ -169,28 +133,17 @@ class Blocs:
     def move_left(self, e):
         print()
         f_line, f_col, s_line, s_col = self.fullbloc
-        print(
-            f"Position du pre-bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
+        # print(
+        #     f"Position du pre-bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
         # L'ancien 1er bloc devient le nouveau 2eme bloc
         self.second_bloc = [f_line, f_col]
         # L'ancien 2e bloc se place au dessus du nouveau 2eme bloc
         self.first_bloc = [f_line, f_col-1]
-        # Retirer l'ancien second bloc de la matrice et laisser une case vide
-        tampon = copie_matrice(e)
-        tampon[s_line][s_col] = 0
-        # Rajouter le nouveau 1er bloc a sa nouvelle position
-        tampon[f_line][f_col-1] = self.codage
         # Mise a jour du bloc complet
         self.fullbloc = self.first_bloc + self.second_bloc
         # Afficher la matrice
         #print("Deplacement vers la gauche du bloc", self.codage)
         print("Deplacement vers la gauche du bloc", self.codage)
-        print(
-            f"Position du bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
-        print("Primary line:", f_line)
-        print("Primary col:", f_col)
-        print("Secondary line:", s_line)
-        print("Secondary col:", s_col)
         print("Etat à instant t: ")
         board = copie_matrice(empty_board)
         fill_board(Blocs.obstacles, board)
@@ -322,4 +275,4 @@ for bloc in Blocs.obstacles:
 
 
 print(recherche_en_profondeur_lim_mem(
-    etat_initial, est_final, operateurs_disponibles, 2, []))
+    etat_initial, est_final, operateurs_disponibles, 5, []))
