@@ -34,6 +34,14 @@ def operateurs_applicables(os, e):
     for o in os:
         if operateur_applicable(o, e):
             res.append(o)
+    print("#####")
+    print("Liste des operateurs applicables à l'état suivant: ")
+    for l in (e):
+        print(l)
+    print("Operateurs: ")
+    for x in res:
+        print(x[0])
+    print("#####")
     return res
 
 
@@ -71,8 +79,8 @@ def recherche_en_profondeur_limitee(e, est_final, os, profondeur):
         operateurs = operateurs_applicables(os, e)
         for o in operateurs:
             ne = applique_operateur(o, e)
-            print("etat nouveau")
-            for l in (e):
+            print("---------")
+            for l in (ne):
                 print(l)
             chemin = recherche_en_profondeur_limitee(
                 ne, est_final, os, profondeur-1)

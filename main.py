@@ -2,13 +2,15 @@
 # Projet Unblock Me, IA
 
 from functools import partial
-from resolution import *
+from resolution import recherche_en_profondeur_memoire, nouvel_operateur
 
 empty_board = [	[0, 0, 0, 0],
                 [0, 0, 0, 0],
                 [0, 0, 0, 0],
                 [0, 0, 0, 0]
                 ]
+
+# print(len(empty_board))
 
 final_test_1 = [[0, 0, 0, 0],
                 [0, 0, 1, 1],
@@ -75,72 +77,88 @@ class Blocs:
         Blocs.obstacles.append(self)
 
         # Deplacement vers le bas du bloc self dans l'etat e
-    def move_down(self, e):
+    def move_down(self, e):  # * RAS
                 # Enumeration des differentes coordonnees du bloc
         f_line, f_col, s_line, s_col = self.fullbloc
-        # Le deuxieme bloc devient le premier
+        print(
+            f"Position du pre-bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
+        # L'ancien deuxieme bloc devient le nouveau premier bloc
         self.first_bloc = [s_line, s_col]
-        # Le bloc en dessous devient le deuxieme
+        # Le bloc en dessous devient le nouveau deuxieme bloc
         self.second_bloc = [s_line+1, s_col]
-        # Mise a jour du bloc complet
-        self.fullbloc = self.first_bloc + self.second_bloc
         # Retirer le premier bloc de la matrice et laisser une case vide
         tampon = copie_matrice(e)
         tampon[f_line][f_col] = 0
         # Rajouter le bloc a sa nouvelle position
         tampon[s_line+1][s_col] = self.codage
-        #print("Deplacement vers le bas du bloc", self.codage)
+        # Mise a jour du bloc complet
+        self.fullbloc = self.first_bloc + self.second_bloc
+        print("Deplacement vers le bas du bloc", self.codage)
+        print(
+            f"Position du bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
         return (tampon)
 
     def move_up(self, e):
         f_line, f_col, s_line, s_col = self.fullbloc
+        print(
+            f"Position du pre-bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
         # L'ancien 1er bloc devient le nouveau 2eme bloc
         self.second_bloc = [f_line, f_col]
         # L'ancien 2e bloc se place au dessus du nouveau 2eme bloc
         self.first_bloc = [f_line-1, f_col]
-        # Mise a jour du bloc complet
-        self.fullbloc = self.first_bloc + self.second_bloc
         # Retirer l'ancien second bloc de la matrice et laisser une case vide
         tampon = copie_matrice(e)
         tampon[s_line][s_col] = 0
         # Rajouter le nouveau 1er bloc a sa nouvelle position
         tampon[f_line-1][f_col] = self.codage
+        # Mise a jour du bloc complet
+        self.fullbloc = self.first_bloc + self.second_bloc
         # Afficher la matrice
-        #print("Deplacement vers le haut du bloc", self.codage)
+        print("Deplacement vers le haut du bloc", self.codage)
+        print(
+            f"Position du bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
         return (tampon)
 
     def move_right(self, e):
         f_line, f_col, s_line, s_col = self.fullbloc
+        print(
+            f"Position du pre-bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
         # Le deuxieme bloc devient le premier
         self.first_bloc = [s_line, s_col]
         # Le bloc a droite devient le deuxieme
         self.second_bloc = [s_line, s_col+1]
-        # Mise a jour du bloc complet
-        self.fullbloc = self.first_bloc + self.second_bloc
         # Retirer le premier bloc de la matrice et laisser une case vide
         tampon = copie_matrice(e)
         tampon[f_line][f_col] = 0
         # Rajouter le bloc a sa nouvelle position
         tampon[s_line][s_col+1] = self.codage
-        # Afficher la matrice
-        #print("Deplacement vers la droite du bloc", self.codage)
+        # Mise a jour du bloc complet
+        self.fullbloc = self.first_bloc + self.second_bloc
+        print("Deplacement vers la droite du bloc", self.codage)
+        print(
+            f"Position du bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
         return (tampon)
 
     def move_left(self, e):
         f_line, f_col, s_line, s_col = self.fullbloc
+        print(
+            f"Position du pre-bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
         # L'ancien 1er bloc devient le nouveau 2eme bloc
         self.second_bloc = [f_line, f_col]
         # L'ancien 2e bloc se place au dessus du nouveau 2eme bloc
         self.first_bloc = [f_line, f_col-1]
-        # Mise a jour du bloc complet
-        self.fullbloc = self.first_bloc + self.second_bloc
         # Retirer l'ancien second bloc de la matrice et laisser une case vide
         tampon = copie_matrice(e)
         tampon[s_line][s_col] = 0
         # Rajouter le nouveau 1er bloc a sa nouvelle position
         tampon[f_line][f_col-1] = self.codage
+        # Mise a jour du bloc complet
+        self.fullbloc = self.first_bloc + self.second_bloc
         # Afficher la matrice
         #print("Deplacement vers la gauche du bloc", self.codage)
+        print("Deplacement vers la gauche du bloc", self.codage)
+        print(
+            f"Position du bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
         return (tampon)
 
     def precond_down(self, e):
@@ -188,18 +206,20 @@ class Blocs:
     def precond_left(self, e):
         # Verifier que le bloc avant le 1er bloc est un 0
         f_line, f_col, s_line, _ = self.fullbloc
+        # Si le premier bloc est contre les bords ou si le bloc n'est pas horizontal
         if (f_col == 0) or (f_line != s_line):
-            #print("Deplacement vers la gauche impossible du bloc", self.codage)
             return False
         else:
+            # Si la case a gauche est vide
             if e[f_line][f_col-1] == 0:
                 #print("Deplacement vers la gauche possible du bloc", self.codage)
                 return True
+            # Si la case de gauche est occupee
             else:
                 #print("Deplacement vers la gauche impossible du bloc", self.codage)
                 return False
-    # Rajouter le nouveau bloc sur le plateau
 
+    # Rajouter le nouveau bloc sur le plateau
     def add_to_board(self, matrice):
         # separer les lignes/colonnes
         f_line, f_col, s_line, s_col = self.fullbloc
@@ -213,7 +233,7 @@ class Blocs:
 # Easy set
 Blocs([1, 1], [1, 2])
 Blocs([0, 3], [1, 3])
-Blocs([2, 2], [2, 3])
+# Blocs([2, 1], [2, 2])
 # bloc_4 = Blocs([3, 1], [3, 2])
 
 
@@ -225,6 +245,7 @@ for bloc in Blocs.obstacles:
     Blocs.add_to_board(bloc, etat_initial)
     print(f"Bloc n°  {bloc.codage} rajouté dans la matrice")
 
+show_board(etat_initial)
 
 # Operateurs disponibles
 operateurs_disponibles = []
@@ -239,20 +260,26 @@ for bloc in Blocs.obstacles:
     op = nouvel_operateur(
         "move left bloc"+str(bloc.codage), partial(Blocs.precond_left, bloc), partial(Blocs.move_left, bloc))
     operateurs_disponibles.append(op)
-    op = nouvel_operateur("move right bloc"+str(bloc.codage), partial(
-        Blocs.precond_right, bloc), partial(Blocs.move_right, bloc))
+    op = nouvel_operateur(
+        "move right bloc"+str(bloc.codage), partial(Blocs.precond_right, bloc), partial(Blocs.move_right, bloc))
     operateurs_disponibles.append(op)
-# print(operateurs_disponibles)
-show_board(etat_initial)
+
+
+# print(len(operateurs_disponibles))
+
+'''
+# * Test des preconditions sur l'etat initial
 for bloc in Blocs.obstacles:
     print(f"{bloc.codage} to right", Blocs.precond_right(bloc, etat_initial))
     print(f"{bloc.codage} to left", Blocs.precond_left(bloc, etat_initial))
     print(f"{bloc.codage} up", Blocs.precond_up(bloc, etat_initial))
     print(f"{bloc.codage} down", Blocs.precond_down(bloc, etat_initial))
     print("--------------")
+'''
 # show_board(Blocs.move_down(bloc_, etat_initial))
-print(recherche_en_profondeur_limitee(
-    etat_initial, est_final, operateurs_disponibles, 5))
 
+
+print(recherche_en_profondeur_memoire(
+    etat_initial, est_final, operateurs_disponibles, 2))
 # print(recherche_en_profondeur_memoire(
 #     etat_initial, est_final, operateurs_disponibles, []))
