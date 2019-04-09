@@ -1,3 +1,4 @@
+from random import shuffle
 
 # construction d'un nouvel opérateur
 
@@ -38,10 +39,9 @@ def operateurs_applicables(os, e):
     print("Liste des operateurs applicables à l'état suivant: ")
     for l in (e):
         print(l)
-    print("Operateurs: ")
+    print("Operateurs applicables: ")
     for x in res:
-        print(x[0])
-    print("#####")
+        print("-", x[0])
     return res
 
 
@@ -76,12 +76,10 @@ def recherche_en_profondeur_limitee(e, est_final, os, profondeur):
     elif profondeur == 0:
         return None
     else:
+        print("Debut d'un nouveau cycle")
         operateurs = operateurs_applicables(os, e)
         for o in operateurs:
             ne = applique_operateur(o, e)
-            print("---------")
-            for l in (ne):
-                print(l)
             chemin = recherche_en_profondeur_limitee(
                 ne, est_final, os, profondeur-1)
             if chemin != None:

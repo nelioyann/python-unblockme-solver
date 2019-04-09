@@ -2,7 +2,7 @@
 # Projet Unblock Me, IA
 
 from functools import partial
-from resolution import recherche_en_profondeur_lim_mem, nouvel_operateur
+from resolution import recherche_en_profondeur_lim_mem, recherche_en_profondeur_limitee, nouvel_operateur
 
 empty_board = [	[0, 0, 0, 0],
                 [0, 0, 0, 0],
@@ -30,7 +30,12 @@ final_test_3 = [[0, 0, 0, 0],
 
 
 def est_final(e):
-    return (e[1][2:4] == [1, 1])
+    if (e[1][2:4] == [1, 1]) or (e[1] == [0, 1, 1, 0]) or (e[1] == [1, 1, 0, 0]):
+        return (True)
+    else:
+        return(False)
+# def est_final(e):
+#     return (e[1][2:4] == [1, 1])
     # return (e[1] == [1, 1, 0, 0])
 
 # * Test de la fonction
@@ -79,10 +84,8 @@ class Blocs:
 
         # Deplacement vers le bas du bloc self dans l'etat e
     def move_down(self, e):  # * RAS
-                # Enumeration des differentes coordonnees du bloc
-        f_line, f_col, s_line, s_col = self.fullbloc
-        # print(
-
+        # Enumeration des differentes coordonnees du bloc
+        s_line, s_col = self.second_bloc
         # L'ancien deuxieme bloc devient le nouveau premier bloc
         self.first_bloc = [s_line, s_col]
         # Le bloc en dessous devient le nouveau deuxieme bloc
@@ -97,9 +100,7 @@ class Blocs:
 
     def move_up(self, e):
         print()
-        f_line, f_col, s_line, s_col = self.fullbloc
-        # print(
-        #     f"Position du pre-bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
+        f_line, f_col = self.first_bloc
         # L'ancien 1er bloc devient le nouveau 2eme bloc
         self.second_bloc = [f_line, f_col]
         # L'ancien 2e bloc se place au dessus du nouveau 2eme bloc
@@ -115,10 +116,8 @@ class Blocs:
 
     def move_right(self, e):
         print()
-        f_line, f_col, s_line, s_col = self.fullbloc
-        # print(
-        #     f"Position du pre-bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
-        # Le deuxieme bloc devient le premier
+        s_line, s_col = self.second_bloc
+        # L'ancien deuxieme bloc devient le nouveau premier
         self.first_bloc = [s_line, s_col]
         # Le bloc a droite devient le deuxieme
         self.second_bloc = [s_line, s_col+1]
@@ -132,9 +131,7 @@ class Blocs:
 
     def move_left(self, e):
         print()
-        f_line, f_col, s_line, s_col = self.fullbloc
-        # print(
-        #     f"Position du pre-bloc {self.codage} = {self.first_bloc},{self.second_bloc}")
+        f_line, f_col = self.first_bloc
         # L'ancien 1er bloc devient le nouveau 2eme bloc
         self.second_bloc = [f_line, f_col]
         # L'ancien 2e bloc se place au dessus du nouveau 2eme bloc
@@ -142,7 +139,6 @@ class Blocs:
         # Mise a jour du bloc complet
         self.fullbloc = self.first_bloc + self.second_bloc
         # Afficher la matrice
-        #print("Deplacement vers la gauche du bloc", self.codage)
         print("Deplacement vers la gauche du bloc", self.codage)
         print("Etat à instant t: ")
         board = copie_matrice(empty_board)
@@ -217,12 +213,11 @@ class Blocs:
 
 # Matrice?board
 # getattr(Board, "bloctest")
-# Obstables
-# Easy set
+# * Obstables
 Blocs([1, 0], [1, 1])
-Blocs([2, 3], [3, 3])
-# Blocs([2, 1], [2, 2])
-# bloc_4 = Blocs([3, 1], [3, 2])
+Blocs([0, 2], [0, 3])
+Blocs([1, 2], [2, 2])
+Blocs([1, 3], [2, 3])
 
 
 # ---------------------------------TEST---------------------------------
@@ -238,7 +233,6 @@ def fill_board(obstacles, matrice):
 
 
 fill_board(Blocs.obstacles, etat_initial)
-# print(f"Bloc n°  {bloc.codage} rajouté dans la matrice")
 
 # show_board(etat_initial)
 
@@ -274,5 +268,7 @@ for bloc in Blocs.obstacles:
 # show_board(Blocs.move_down(bloc_, etat_initial))
 
 
+# print(recherche_en_profondeur_limitee(
+#     etat_initial, est_final, operateurs_disponibles, 5))
 print(recherche_en_profondeur_lim_mem(
-    etat_initial, est_final, operateurs_disponibles, 5, []))
+    etat_initial, est_final, operateurs_disponibles, 7, []))

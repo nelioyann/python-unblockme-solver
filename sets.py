@@ -1,14 +1,32 @@
-# Easy set
-bloc_1 = Blocs([1, 1], [1, 2])
-bloc_2 = Blocs([0, 0], [1, 0])
-bloc_3 = Blocs([2, 2], [2, 3])
-bloc_4 = Blocs([3, 1], [3, 2])
-# Medium set
-bloc_1 = Blocs([1, 0], [1, 1])
-bloc_2 = Blocs([0, 2], [1, 2])
-bloc_3 = Blocs([2, 2], [2, 3])
-bloc_4 = Blocs([3, 0], [3, 1])
-#########
-bloc_1 = Blocs([1, 1], [1, 2])
-bloc_2 = Blocs([0, 3], [1, 3])
-bloc_3 = Blocs([2, 2], [2, 3])
+'''
+# 1
+Blocs([1, 0], [1, 1])
+Blocs([0, 2], [1, 2])
+
+
+# 2
+Blocs([1, 0], [1, 1])
+Blocs([0, 2], [1, 2])
+Blocs([2, 1], [2, 2])
+Blocs([3, 0], [3, 1])
+
+#3:profondeur 7
+Blocs([1, 0], [1, 1])
+Blocs([0, 2], [1, 2])
+Blocs([2, 1], [2, 2])
+Blocs([3, 2], [3, 3])
+
+#4:profondeur 7
+Blocs([1, 0], [1, 1])
+Blocs([0, 2], [0, 3])
+Blocs([1, 2], [2, 2])
+Blocs([1, 3], [2, 3])
+Blocs([3, 2], [3, 3])
+
+#5
+Blocs([1, 0], [1, 1])
+Blocs([0, 2], [1, 2])
+Blocs([0, 3], [1, 3])
+Blocs([2, 1], [2, 2])
+Blocs([3, 1], [3, 2])
+'''
