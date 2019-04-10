@@ -131,37 +131,20 @@ def recherche_en_profondeur_lim_mem(e, est_final, os, prof, déjà):
 
 
 def recherche_en_largeur(e, est_final, os, fermés, succes):
-    #   ouverts = { état initial } ; fermés = vide ; succes = faux
-    #   Tant que (ouverts non vide) et (non succes) faire
     ouverts = [e]
     fermes = []
-    # ouverts.append(e)
     while (e != [] and not succes):
-        noeud = ouverts[-1]
-        # Si est_final(n) Alors succès=vrai
+        noeud = ouverts[0]
         if est_final(noeud):
-            return []
+            print("FINAL")
+            succes = True
         else:
-            # Sinon ouverts = ouverts privé de n
             ouverts.remove(noeud)
-            #fermés = fermés + n
             fermes.append(noeud)
-            #           Pour chaque successeurs s de n faire
-            operateurs = operateurs_applicables(os, e)
+            operateurs = operateurs_applicables(os, noeud)
             for o in operateurs:
-
-                ne = applique_operateur(o, e)
-            #   Si (s n’est ni dans ouverts ni dans fermés) Alors
-                if (ne not in ouverts) and (ne not in fermes):
-                    #       ouverts = ouverts + s
-                    ouverts.append(ne)
-            #       père(s) = n
-                pere = n
-            #               Fin si
-            #           Fin pour
-            #       Fin si
-            #   Fin TQ
-            # Fin
-
+                sub_noeud = applique_operateur(o, e)
+                if (sub_noeud not in ouverts) and (sub_noeud not in fermes):
+                    ouverts.append(sub_noeud)
 
 # recherche_en_largeur(e, est_final, os, [], False)

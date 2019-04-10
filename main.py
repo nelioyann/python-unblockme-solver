@@ -2,7 +2,7 @@
 # Projet Unblock Me, IA
 
 from functools import partial
-from resolution import recherche_en_profondeur_lim_mem, recherche_en_profondeur_limitee, nouvel_operateur, recherche_en_profondeur_memoire
+from resolution import recherche_en_profondeur_lim_mem, recherche_en_profondeur_limitee, nouvel_operateur, recherche_en_profondeur_memoire, recherche_en_largeur
 
 empty_board = [	[0, 0, 0, 0],
                 [0, 0, 0, 0],
@@ -218,5 +218,7 @@ for bloc in Blocs.obstacles:
 
 # print(recherche_en_profondeur_limitee(
 #     etat_initial, est_final, operateurs_disponibles, 5))
-print(recherche_en_profondeur_lim_mem(
-    etat_initial, est_final, operateurs_disponibles, 7, []))
+# print(recherche_en_profondeur_lim_mem(
+#     etat_initial, est_final, operateurs_disponibles, 7, []))
+print(recherche_en_largeur(
+    etat_initial, est_final, operateurs_disponibles, [], False))
