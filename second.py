@@ -47,68 +47,47 @@ class Blocs:
     def __init__(self, first_bloc, second_bloc):
         # First Bloc est le bloc au plus a gauche/en haut a l'interieur de la matrice
         # Second Bloc est le bloc au plus a droite/en bas a l'interieur de la matrice
-        self.first_bloc = first_bloc
-        self.second_bloc = second_bloc
-        self.fullbloc = first_bloc + second_bloc
+        # self.first_bloc = first_bloc
+        # self.second_bloc = second_bloc
+        # self.fullbloc = first_bloc + second_bloc
         # Codage est la valeur qui sera utilise pour RPZ le bloc a l'interieur de la matrice
         self.codage = Blocs.codage
         Blocs.codage += 1
         Blocs.obstacles.append(self)
 
         # Deplacement vers le bas du bloc self dans l'etat e
-
     def move_down(self, e):  # * RAS
         # Enumeration coordonnees du second carre
         _, _, s_line, s_col = e[self.codage]
         new_bloc = [s_line, s_col, s_line+1, s_col]
         print("Deplacement vers le bas du bloc", self.codage)
-        interm = copie_matrice(e)
-        interm[self.codage] = new_bloc
-        return (interm)
+        nouvel_etat = copie_matrice(e)
+        nouvel_etat[self.codage] = new_bloc
+        return (nouvel_etat)
 
     def move_up(self, e):
-        f_line, f_col = self.first_bloc
-        # L'ancien 1er bloc devient le nouveau 2eme bloc
-        self.second_bloc = [f_line, f_col]
-        # L'ancien 2e bloc se place au dessus du nouveau 2eme bloc
-        self.first_bloc = [f_line-1, f_col]
-        # Mise a jour du bloc complet
-        self.fullbloc = self.first_bloc + self.second_bloc
-        # Afficher la matrice
+        f_line, f_col, _, _ = e[self.codage]
+        new_bloc = [f_line-1, f_col, f_line, f_col]
         print("Deplacement vers le haut du bloc", self.codage)
-        print("Etat à instant t: ")
-        board = copie_matrice(empty_board)
-        fill_board(Blocs.obstacles, board)
-        return (board)
+        nouvel_etat = copie_matrice(e)
+        nouvel_etat[self.codage] = new_bloc
+        return (nouvel_etat)
 
     def move_right(self, e):
-        s_line, s_col = self.second_bloc
-        # L'ancien deuxieme bloc devient le nouveau premier
-        self.first_bloc = [s_line, s_col]
-        # Le bloc a droite devient le deuxieme
-        self.second_bloc = [s_line, s_col+1]
-        # Mise a jour du bloc complet
-        self.fullbloc = self.first_bloc + self.second_bloc
+        _, _, s_line, s_col = e[self.codage]
+        new_bloc = [s_line, s_col, s_line, s_col+1]
         print("Deplacement vers la droite du bloc", self.codage)
-        print("Etat à instant t: ")
-        board = copie_matrice(empty_board)
-        fill_board(Blocs.obstacles, board)
-        return (board)
+        nouvel_etat = copie_matrice(e)
+        nouvel_etat[self.codage] = new_bloc
+        return (nouvel_etat)
 
     def move_left(self, e):
-        f_line, f_col = self.first_bloc
-        # L'ancien 1er bloc devient le nouveau 2eme bloc
-        self.second_bloc = [f_line, f_col]
-        # L'ancien 2e bloc se place au dessus du nouveau 2eme bloc
-        self.first_bloc = [f_line, f_col-1]
-        # Mise a jour du bloc complet
-        self.fullbloc = self.first_bloc + self.second_bloc
-        # Afficher la matrice
+        f_line, f_col, _, _ = e[self.codage]
+        new_bloc = [f_line, f_col-1, f_line, f_col]
         print("Deplacement vers la gauche du bloc", self.codage)
-        print("Etat à instant t: ")
-        board = copie_matrice(empty_board)
-        fill_board(Blocs.obstacles, board)
-        return (board)
+        nouvel_etat = copie_matrice(e)
+        nouvel_etat[self.codage] = new_bloc
+        return (nouvel_etat)
 
     def precond_down(self, e):
         # Verifier que le bloc en dessous du 2eme bloc est un 0
@@ -164,13 +143,6 @@ class Blocs:
             # Si aucun des bloc de l'etat n'occupe l'espace que l'on souhaite occupe
             return True
 
-    # Rajouter le nouveau bloc sur le plateau
-    def add_to_board(self, matrice):
-        # separer les lignes/colonnes
-        f_line, f_col, s_line, s_col = self.fullbloc
-        matrice[f_line][f_col] = self.codage
-        matrice[s_line][s_col] = self.codage
-
 
 # Matrice?board
 # getattr(Board, "bloctest")
@@ -182,7 +154,7 @@ Blocs([1, 3], [2, 3])
 
 etat_futur = [[1, 0, 1, 1], [0, 2, 0, 3], [1, 2, 2, 2], [1, 3, 2, 3]]
 for bloc in Blocs.obstacles:
-    print(f"Bloc n-{bloc.codage} = {bloc.fullbloc}")
+    print(f"Bloc n-{bloc.codage}")
     print(Blocs.precond_up(bloc, etat_futur))
     print()
 # etatfutur = []
@@ -194,13 +166,15 @@ etat_initial = copie_matrice(empty_board)
 # Rajout des blocs dans la matrice
 
 
-def fill_board(obstacles, matrice):
-    for bloc in obstacles:
-        Blocs.add_to_board(bloc, matrice)
+def fill_board(etat, matrice):
+    for index, bloc in enumerate(etat):
+        f_line, f_col, s_line, s_col = bloc
+        matrice[f_line][f_col] = index
+        matrice[s_line][s_col] = index
     show_board(matrice)
 
 
-fill_board(Blocs.obstacles, etat_initial)
+fill_board(etat_futur, etat_initial)
 
 
 '''
