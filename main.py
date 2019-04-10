@@ -2,29 +2,11 @@
 # Projet Unblock Me, IA
 
 from functools import partial
-from resolution import recherche_en_profondeur_lim_mem, recherche_en_profondeur_limitee, nouvel_operateur
+from resolution import recherche_en_profondeur_lim_mem, recherche_en_profondeur_limitee, nouvel_operateur, recherche_en_profondeur_memoire
 
 empty_board = [	[0, 0, 0, 0],
                 [0, 0, 0, 0],
                 [0, 0, 0, 0],
-                [0, 0, 0, 0]
-                ]
-
-# print(len(empty_board))
-
-final_test_1 = [[0, 0, 0, 0],
-                [0, 0, 1, 1],
-                [0, 0, 0, 0],
-                [0, 0, 0, 0]
-                ]
-final_test_2 = [[0, 0, 0, 0],
-                [0, 0, 1, 1],
-                [2, 2, 0, 0],
-                [0, 0, 0, 0]
-                ]
-final_test_3 = [[0, 0, 0, 0],
-                [0, 1, 1, 0],
-                [2, 2, 0, 0],
                 [0, 0, 0, 0]
                 ]
 
@@ -34,14 +16,6 @@ def est_final(e):
         return (True)
     else:
         return(False)
-# def est_final(e):
-#     return (e[1][2:4] == [1, 1])
-    # return (e[1] == [1, 1, 0, 0])
-
-# * Test de la fonction
-# print(est_final(final_test_1))
-# print(est_final(final_test_2))
-# print(est_final(final_test_3))
 
 
 def show_board(e):
@@ -60,11 +34,6 @@ def copie_matrice(m):
 # Bloque à déplacer
 
 
-# show_board(final_test_1)
-# print()
-# show_board(copie_matrice(final_test_1))
-
-
 class Blocs:
     codage = 0  # valeur qui represente l'instance du bloc dans la matrice
     obstacles = []  # liste de toutes les instances
@@ -72,8 +41,8 @@ class Blocs:
     # Chaque petit bloc est une liste de coordonnees (x,y)
 
     def __init__(self, first_bloc, second_bloc):
-                # First Bloc est le bloc au plus a gauche/en haut a l'interieur de la matrice
-                # Second Bloc est le bloc au plus a droite/en bas a l'interieur de la matrice
+        # First Bloc est le bloc au plus a gauche/en haut a l'interieur de la matrice
+        # Second Bloc est le bloc au plus a droite/en bas a l'interieur de la matrice
         self.first_bloc = first_bloc
         self.second_bloc = second_bloc
         self.fullbloc = first_bloc + second_bloc
@@ -99,7 +68,6 @@ class Blocs:
         return (board)
 
     def move_up(self, e):
-        print()
         f_line, f_col = self.first_bloc
         # L'ancien 1er bloc devient le nouveau 2eme bloc
         self.second_bloc = [f_line, f_col]
@@ -115,7 +83,6 @@ class Blocs:
         return (board)
 
     def move_right(self, e):
-        print()
         s_line, s_col = self.second_bloc
         # L'ancien deuxieme bloc devient le nouveau premier
         self.first_bloc = [s_line, s_col]
@@ -130,7 +97,6 @@ class Blocs:
         return (board)
 
     def move_left(self, e):
-        print()
         f_line, f_col = self.first_bloc
         # L'ancien 1er bloc devient le nouveau 2eme bloc
         self.second_bloc = [f_line, f_col]
@@ -153,10 +119,8 @@ class Blocs:
             return False
         else:
             if e[s_line+1][s_col] == 0:
-                #print("Deplacement vers le bas possible du bloc", self.codage)
                 return True
             else:
-                #print("Deplacement vers le bas impossible du bloc", self.codage)
                 return False
 
     def precond_right(self, e):
@@ -234,8 +198,6 @@ def fill_board(obstacles, matrice):
 
 fill_board(Blocs.obstacles, etat_initial)
 
-# show_board(etat_initial)
-
 # Operateurs disponibles
 operateurs_disponibles = []
 for bloc in Blocs.obstacles:
@@ -252,20 +214,6 @@ for bloc in Blocs.obstacles:
     op = nouvel_operateur(
         "move right bloc"+str(bloc.codage), partial(Blocs.precond_right, bloc), partial(Blocs.move_right, bloc))
     operateurs_disponibles.append(op)
-
-
-# print(len(operateurs_disponibles))
-
-'''
-# * Test des preconditions sur l'etat initial
-for bloc in Blocs.obstacles:
-    print(f"{bloc.codage} to right", Blocs.precond_right(bloc, etat_initial))
-    print(f"{bloc.codage} to left", Blocs.precond_left(bloc, etat_initial))
-    print(f"{bloc.codage} up", Blocs.precond_up(bloc, etat_initial))
-    print(f"{bloc.codage} down", Blocs.precond_down(bloc, etat_initial))
-    print("--------------")
-'''
-# show_board(Blocs.move_down(bloc_, etat_initial))
 
 
 # print(recherche_en_profondeur_limitee(

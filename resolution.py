@@ -124,6 +124,7 @@ def recherche_en_profondeur_lim_mem(e, est_final, os, prof, déjà):
             ne = applique_operateur(o, e)
             chemin = recherche_en_profondeur_lim_mem(
                 ne, est_final, os, prof-1, déjà)
+            print("Chemin = ", chemin)
             if chemin != None:
                 return [nom_operateur(o)] + chemin
         return None
@@ -131,27 +132,36 @@ def recherche_en_profondeur_lim_mem(e, est_final, os, prof, déjà):
 
 def recherche_en_largeur(e, est_final, os, fermés, succes):
     #   ouverts = { état initial } ; fermés = vide ; succes = faux
-
     #   Tant que (ouverts non vide) et (non succes) faire
-    ouverts = []
+    ouverts = [e]
     fermes = []
-    ouverts.append(e)
-    n = ouverts[0]
+    # ouverts.append(e)
     while (e != [] and not succes):
+        noeud = ouverts[-1]
         # Si est_final(n) Alors succès=vrai
-        if est_final(e):
+        if est_final(noeud):
             return []
         else:
             # Sinon ouverts = ouverts privé de n
-            ouverts.remove(n)
+            ouverts.remove(noeud)
             #fermés = fermés + n
-            fermes.append(n)
+            fermes.append(noeud)
             #           Pour chaque successeurs s de n faire
-            #               Si (s n’est ni dans ouverts ni dans fermés) Alors
-            #                   ouverts = ouverts + s
-            #                   père(s) = n
+            operateurs = operateurs_applicables(os, e)
+            for o in operateurs:
+
+                ne = applique_operateur(o, e)
+            #   Si (s n’est ni dans ouverts ni dans fermés) Alors
+                if (ne not in ouverts) and (ne not in fermes):
+                    #       ouverts = ouverts + s
+                    ouverts.append(ne)
+            #       père(s) = n
+                pere = n
             #               Fin si
             #           Fin pour
             #       Fin si
             #   Fin TQ
             # Fin
+
+
+# recherche_en_largeur(e, est_final, os, [], False)
