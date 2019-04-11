@@ -2,6 +2,52 @@ from random import shuffle
 
 # construction d'un nouvel opérateur
 
+empty_board = [	['x', 'x', 'x', 'x'],
+                ['x', 'x', 'x', 'x'],
+                ['x', 'x', 'x', 'x'],
+                ['x', 'x', 'x', 'x']
+                ]
+
+
+# def copie_matrice(m):
+#     return [
+#         [m[0][0], m[0][1], m[0][2], m[0][3], m[0][4]],
+#         [m[1][0], m[1][1], m[1][2], m[1][3], m[1][4]],
+#         [m[2][0], m[2][1], m[2][2], m[2][3], m[2][4]],
+#         [m[3][0], m[3][1], m[3][2], m[3][3], m[3][4]],
+#         [m[4][0], m[4][1], m[4][2], m[4][3], m[4][4]]
+#     ]
+def copie_matrice(m):
+    return [
+        [m[0][0], m[0][1], m[0][2], m[0][3]],
+        [m[1][0], m[1][1], m[1][2], m[1][3]],
+        [m[2][0], m[2][1], m[2][2], m[2][3]],
+        [m[3][0], m[3][1], m[3][2], m[3][3]]
+    ]
+
+
+# def show_board(e):
+#     print(" - - - -")
+#     for l in e:
+#         print(f"|{l[0]} {l[1]} {l[2]} {l[3]} {l[4]}|")
+#         # print(" _ _ _ _")
+#     print(" - - - -")
+def show_board(e):
+    print(" - - - -")
+    for l in e:
+        print(f"|{l[0]} {l[1]} {l[2]} {l[3]}|")
+        # print(" _ _ _ _")
+    print(" - - - -")
+
+
+def fill_board(etat):
+    instance = copie_matrice(empty_board)
+    for index, bloc in enumerate(etat):
+        f_line, f_col, s_line, s_col = bloc
+        instance[f_line][f_col] = index
+        instance[s_line][s_col] = index
+    show_board(instance)
+
 
 def nouvel_operateur(nom, precond, effet):
     return (nom, precond, effet)
@@ -37,8 +83,7 @@ def operateurs_applicables(os, e):
             res.append(o)
     print("")
     print("Liste des operateurs applicables à l'état suivant: ")
-    for l in (e):
-        print(l)
+    # fill_board(e)
     print("Operateurs applicables: ")
     for x in res:
         print("-", x[0])
@@ -70,8 +115,7 @@ def recherche_en_profondeur(e, est_final, os):
 def recherche_en_profondeur_limitee(e, est_final, os, profondeur):
     if est_final(e):
         print("etat final")
-        for l in (e):
-            print(l)
+        # fill_board(e)
         return []
     elif profondeur == 0:
         return None
