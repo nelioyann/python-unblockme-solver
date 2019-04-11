@@ -9,44 +9,35 @@ empty_board = [	['x', 'x', 'x', 'x'],
                 ]
 
 
-# def copie_matrice(m):
-#     return [
-#         [m[0][0], m[0][1], m[0][2], m[0][3], m[0][4]],
-#         [m[1][0], m[1][1], m[1][2], m[1][3], m[1][4]],
-#         [m[2][0], m[2][1], m[2][2], m[2][3], m[2][4]],
-#         [m[3][0], m[3][1], m[3][2], m[3][3], m[3][4]],
-#         [m[4][0], m[4][1], m[4][2], m[4][3], m[4][4]]
-#     ]
-def copie_matrice(m):
-    return [
-        [m[0][0], m[0][1], m[0][2], m[0][3]],
-        [m[1][0], m[1][1], m[1][2], m[1][3]],
-        [m[2][0], m[2][1], m[2][2], m[2][3]],
-        [m[3][0], m[3][1], m[3][2], m[3][3]]
-    ]
+def show(matrice):
+    print("- - - - - -")
+    for bloc in matrice:
+        ligne = " "
+        for element in bloc:
+            ligne += str(element) + " "
+        print(f"|{ligne}|")
+    print("- - - - - -")
 
 
-# def show_board(e):
-#     print(" - - - -")
-#     for l in e:
-#         print(f"|{l[0]} {l[1]} {l[2]} {l[3]} {l[4]}|")
-#         # print(" _ _ _ _")
-#     print(" - - - -")
-def show_board(e):
-    print(" - - - -")
-    for l in e:
-        print(f"|{l[0]} {l[1]} {l[2]} {l[3]}|")
-        # print(" _ _ _ _")
-    print(" - - - -")
+def copie(matrice):
+    copied = []
+    for bloc in matrice:
+        coord_list = []
+        for coord in bloc:
+            coord_list.append(coord)
+        copied.append(coord_list)
+    return(copied)
+
+# * Forme la grille a partir d'un etat
 
 
 def fill_board(etat):
-    instance = copie_matrice(empty_board)
+    instance = copie(empty_board)
     for index, bloc in enumerate(etat):
         f_line, f_col, s_line, s_col = bloc
         instance[f_line][f_col] = index
         instance[s_line][s_col] = index
-    show_board(instance)
+    show(instance)
 
 
 def nouvel_operateur(nom, precond, effet):
@@ -71,6 +62,7 @@ def action_operateur(o):
 
 def operateur_applicable(o, e):
     precond = precond_operateur(o)
+
     return (precond(e))
 
 # sélection des opérateurs de os qui sont applicables à e
@@ -81,9 +73,9 @@ def operateurs_applicables(os, e):
     for o in os:
         if operateur_applicable(o, e):
             res.append(o)
-    print("")
+    # print("")
     print("Liste des operateurs applicables à l'état suivant: ")
-    # fill_board(e)
+    fill_board(e)
     print("Operateurs applicables: ")
     for x in res:
         print("-", x[0])
@@ -120,14 +112,14 @@ def recherche_en_profondeur_limitee(e, est_final, os, profondeur):
     elif profondeur == 0:
         return None
     else:
-        print("Debut d'un nouveau cycle")
+        # print("Debut d'un nouveau cycle")
         operateurs = operateurs_applicables(os, e)
         for o in operateurs:
             ne = applique_operateur(o, e)
             chemin = recherche_en_profondeur_limitee(
                 ne, est_final, os, profondeur-1)
             if chemin != None:
-                return [nom_operateur(o)] + chemin
+                return [action_operateur(o)] + chemin
         return None
 
 
@@ -168,27 +160,33 @@ def recherche_en_profondeur_lim_mem(e, est_final, os, prof, déjà):
             ne = applique_operateur(o, e)
             chemin = recherche_en_profondeur_lim_mem(
                 ne, est_final, os, prof-1, déjà)
-            print("Chemin = ", chemin)
+            # print("Chemin = ", chemin)
             if chemin != None:
-                return [nom_operateur(o)] + chemin
+                return [action_operateur(o)] + chemin
         return None
 
 
 def recherche_en_largeur(e, est_final, os, fermés, succes):
     ouverts = [e]
     fermes = []
-    while (e != [] and not succes):
+    while (ouverts != [] and not succes):
         noeud = ouverts[0]
         if est_final(noeud):
             print("FINAL")
             succes = True
         else:
+            print(ouverts)
             ouverts.remove(noeud)
             fermes.append(noeud)
             operateurs = operateurs_applicables(os, noeud)
             for o in operateurs:
-                sub_noeud = applique_operateur(o, e)
+                sub_noeud = applique_operateur(o, noeud)
+                print("Sub Noeud", sub_noeud)
+                fill_board(sub_noeud)
                 if (sub_noeud not in ouverts) and (sub_noeud not in fermes):
                     ouverts.append(sub_noeud)
-
+    print("Ouverts = ", ouverts)
+    print("Fermes = ", fermes)
+    for k in fermes:
+        fill_board(k)
 # recherche_en_largeur(e, est_final, os, [], False)

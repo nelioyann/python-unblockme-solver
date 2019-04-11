@@ -4,7 +4,7 @@
 # ** Etat = [[],[],[],[]]
 
 # Projet Unblock Me, IA
-
+import time
 from functools import partial
 from resolution import recherche_en_profondeur_lim_mem, recherche_en_profondeur_limitee, nouvel_operateur, recherche_en_profondeur_memoire, recherche_en_largeur
 
@@ -22,18 +22,15 @@ def est_final(e):
         return(False)
 
 
-# def show_board(e):
-#     print(" - - - -")
-#     for l in e:
-#         print(f"|{l[0]} {l[1]} {l[2]} {l[3]} {l[4]}|")
-#         # print(" _ _ _ _")
-#     print(" - - - -")
-def show_board(e):
-    print(" - - - -")
-    for l in e:
-        print(f"|{l[0]} {l[1]} {l[2]} {l[3]}|")
-        # print(" _ _ _ _")
-    print(" - - - -")
+def show(matrice):
+    print("- -" + " -"*len(matrice))
+    # print("- - - - - -")
+    for bloc in matrice:
+        ligne = " "
+        for element in bloc:
+            ligne += str(element) + " "
+        print(f"|{ligne}|")
+    print("- -" + " -"*len(matrice))
 
 
 def copie(matrice):
@@ -45,24 +42,18 @@ def copie(matrice):
         copied.append(coord_list)
     return(copied)
 
-
-def copie_etat(m):
-    return [
-        [m[0][0], m[0][1], m[0][2], m[0][3]],
-        [m[1][0], m[1][1], m[1][2], m[1][3]],
-        [m[2][0], m[2][1], m[2][2], m[2][3]],
-        [m[3][0], m[3][1], m[3][2], m[3][3]],
-        [m[4][0], m[4][1], m[4][2], m[4][3]]
-    ]
+# * Forme la grille a partir d'un etat
 
 
-def copie_matrice(m):
-    return [
-        [m[0][0], m[0][1], m[0][2], m[0][3]],
-        [m[1][0], m[1][1], m[1][2], m[1][3]],
-        [m[2][0], m[2][1], m[2][2], m[2][3]],
-        [m[3][0], m[3][1], m[3][2], m[3][3]]
-    ]
+def fill_board(etat):
+    instance = copie(empty_board)
+    for index, bloc in enumerate(etat):
+        f_line, f_col, s_line, s_col = bloc
+        instance[f_line][f_col] = index
+        instance[s_line][s_col] = index
+    show(instance)
+
+
 # Bloque à déplacer
 
 
@@ -86,7 +77,7 @@ class Blocs:
         _, _, s_line, s_col = e[self.codage]
         new_bloc = [s_line, s_col, s_line+1, s_col]
         print("Deplacement vers le bas du bloc", self.codage)
-        nouvel_etat = copie_etat(e)
+        nouvel_etat = copie(e)
         nouvel_etat[self.codage] = new_bloc
         return (nouvel_etat)
 
@@ -94,7 +85,7 @@ class Blocs:
         f_line, f_col, _, _ = e[self.codage]
         new_bloc = [f_line-1, f_col, f_line, f_col]
         print("Deplacement vers le haut du bloc", self.codage)
-        nouvel_etat = copie_etat(e)
+        nouvel_etat = copie(e)
         nouvel_etat[self.codage] = new_bloc
         return (nouvel_etat)
 
@@ -102,7 +93,7 @@ class Blocs:
         _, _, s_line, s_col = e[self.codage]
         new_bloc = [s_line, s_col, s_line, s_col+1]
         print("Deplacement vers la droite du bloc", self.codage)
-        nouvel_etat = copie_etat(e)
+        nouvel_etat = copie(e)
         nouvel_etat[self.codage] = new_bloc
         return (nouvel_etat)
 
@@ -110,18 +101,18 @@ class Blocs:
         f_line, f_col, _, _ = e[self.codage]
         new_bloc = [f_line, f_col-1, f_line, f_col]
         print("Deplacement vers la gauche du bloc", self.codage)
-        nouvel_etat = copie_etat(e)
+        nouvel_etat = copie(e)
         nouvel_etat[self.codage] = new_bloc
         return (nouvel_etat)
 
     def precond_down(self, e):
-        print("codage", self.codage)
-        print("e", e)
+        # print("codage", self.codage)
+        # print("e", e)
         # Verifier que le bloc en dessous du 2eme bloc est un 0
         _, f_col, s_line, s_col = e[self.codage]
         # Si le bloc est contre un bord ou s'il n'est pas vertical
         if (s_line == len(empty_board) - 1) or (f_col != s_col):
-            #print("Deplacement vers le bas impossible du bloc", self.codage)
+            # print("Deplacement vers le bas impossible du bloc", self.codage)
             return False
         else:
             for bloc in e:
@@ -171,50 +162,19 @@ class Blocs:
             return True
 
 
-def fill_board(etat):
-    instance = copie_matrice(empty_board)
-    for index, bloc in enumerate(etat):
-        f_line, f_col, s_line, s_col = bloc
-        instance[f_line][f_col] = index
-        instance[s_line][s_col] = index
-    show_board(instance)
-
-
-# Matrice?board
-# getattr(Board, "bloctest")
-
-
-# for bloc in Blocs.obstacles:
-#     print(f"Bloc n-{bloc.codage}")
-#     print(Blocs.precond_up(bloc, etat_futur))
-#     print()
-# etatfutur = []
 # ---------------------------------TEST---------------------------------
 # Initialisation
 # * Obstables
 Blocs([1, 0, 1, 1])
-Blocs([0, 2, 0, 3])
-Blocs([1, 2, 2, 2])
-Blocs([1, 3, 2, 3])
-Blocs([3, 2, 3, 3])
+Blocs([0, 2, 1, 2])
+# Blocs([0, 3, 1, 3])
+# Blocs([2, 1, 2, 2])
+# Blocs([3, 1, 3, 2])
 
 etat_initial = Blocs.initial
 # fill_board(etat_initial)
 
 # Rajout des blocs dans la matrice
-
-# etat_futur = Blocs.move_down(Blocs.obstacles[3], etat_futur)
-# fill_board(etat_futur, etat_initial)
-# fill_board(etat_futur)
-# print(etat_futur)
-# etat_futur = Blocs.move_left(Blocs.obstacles[1], etat_futur)
-# print(etat_futur)
-# fill_board(etat_futur)
-# etat_futur = Blocs.move_left(Blocs.obstacles[1], etat_futur)
-# print(etat_futur)
-# fill_board(etat_futur)
-# fill_board(etat_futur, etat_initial)
-
 
 # Operateurs disponibles
 operateurs_disponibles = []
@@ -233,11 +193,28 @@ for bloc in Blocs.obstacles:
         "move right bloc n°"+str(bloc.codage), partial(Blocs.precond_right, bloc), partial(Blocs.move_right, bloc))
     operateurs_disponibles.append(op)
 
+start = time.time()
 
-print(recherche_en_profondeur_limitee(
-    etat_initial, est_final, operateurs_disponibles, 7))
-# fill_board(etat_initial)
-# print(recherche_en_profondeur_lim_mem(
-#     etat_initial, est_final, operateurs_disponibles, 7, []))
+solution = recherche_en_profondeur_limitee(
+    etat_initial, est_final, operateurs_disponibles, 4)
+
+# solution = (recherche_en_profondeur_lim_mem(
+#     etat_initial, est_final, operateurs_disponibles, 4, []))
 # print(recherche_en_largeur(
 #     etat_initial, est_final, operateurs_disponibles, [], False))
+end = time.time()
+
+
+def show_result(solution, e):
+    if solution != None:
+        print(f"\n__SOLUTION en {len(solution)} coups__\n")
+        for mouvement in solution:
+            e = mouvement(e)
+            fill_board(e)
+        print(end - start)
+    else:
+        print("Pas de solution")
+        print(end - start)
+
+
+show_result(solution, etat_initial)

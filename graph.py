@@ -1,7 +1,9 @@
-import pygame, sys ,random
+import pygame
+import sys
+import random
 from pygame.locals import *
 from random import *
-#Screen details
+# Screen details
 width = 500
 height = 500
 
