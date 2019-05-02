@@ -6,25 +6,31 @@
 # Projet Unblock Me, IA
 import time
 from functools import partial
-from resolution import recherche_en_profondeur_lim_mem, recherche_en_profondeur_limitee, nouvel_operateur, recherche_en_profondeur_memoire, recherche_en_largeur
+from resolution import recherche_en_profondeur_lim_mem, recherche_en_profondeur, recherche_en_profondeur_limitee, nouvel_operateur, recherche_en_profondeur_memoire, recherche_en_largeur
 
+
+# ---------------------------------VARS---------------------------------
+# Representation de la grille de jeu vide
+#! Grille 4x4, creation dynamic ?
 empty_board = [	['x', 'x', 'x', 'x'],
                 ['x', 'x', 'x', 'x'],
                 ['x', 'x', 'x', 'x'],
                 ['x', 'x', 'x', 'x']
                 ]
 
-
+operateurs_disponibles = []
+# ---------------------------------FONCTIONS---------------------------------
+# Verifie si un etat correspond a une fin de partie
 def est_final(e):
+    # Si le bloc principal se trouve en position de fin de partie
     if (e[0] == [1, 2, 1, 3]):
         return (True)
     else:
         return(False)
 
-
+#! Affiche un plateau de jeu
 def show(matrice):
     print("- -" + " -"*len(matrice))
-    # print("- - - - - -")
     for bloc in matrice:
         ligne = " "
         for element in bloc:
@@ -42,144 +48,140 @@ def copie(matrice):
         copied.append(coord_list)
     return(copied)
 
-# * Forme la grille a partir d'un etat
-
-
+# * Construction du plateau a partir d'un etat et d'une grille vide
 def fill_board(etat):
     instance = copie(empty_board)
     for index, bloc in enumerate(etat):
+        # Decomposition des coordonnees
         f_line, f_col, s_line, s_col = bloc
+        # Ajouts du marqueur(index) du bloc dans la grille
         instance[f_line][f_col] = index
         instance[s_line][s_col] = index
+    # Affichage du plateau nouvellement forme
     show(instance)
 
+def show_result(solution, e):
+    if solution != None:
+        print(f"\n__SOLUTION en {len(solution)} coups__\n")
+        fill_board(e)
+        for mouvement in solution:
+            e = mouvement(e)
+            fill_board(e)
+        print(f"Temps mis: {end - start}s")
+    else:
+        print("Pas de solution")
+        print(end - start)
 
-# Bloque à déplacer
-
-
+# --------------------------------- Operations sur les blocs---------------------------------
 class Blocs:
     codage = 0  # valeur qui represente l'instance du bloc dans la matrice
     obstacles = []  # liste de toutes les instances
-    initial = []
-    # Initialisation d'une instance composee de 2 petits blocs
-    # Chaque petit bloc est une liste de coordonnees (x,y)
+    initial = [] # liste des coordonees de chaque bloc de l'etat initial
 
+    # Initialisation d'une bloc depend des coords (x1,y1,x2,y2) de ses 2 petits blocs
     def __init__(self, bloc_coord):
-        # Codage est la valeur qui sera utilise pour RPZ le bloc a l'interieur de la matrice
-        self.codage = Blocs.codage
+        self.codage = Blocs.codage # Codage est le label associe au bloc
         Blocs.codage += 1
-        Blocs.obstacles.append(self)
-        Blocs.initial.append(bloc_coord)
+        Blocs.obstacles.append(self) # ajout de l'instance actuelle a la liste d'obstacles
+        Blocs.initial.append(bloc_coord) # ajout des coordonnes de l'instance a la liste de coordonnees
 
-        # Deplacement vers le bas du bloc self dans l'etat e
-    def move_down(self, e):  # * RAS
-        # Enumeration coordonnees du second carre
-        _, _, s_line, s_col = e[self.codage]
-        new_bloc = [s_line, s_col, s_line+1, s_col]
-        print("Deplacement vers le bas du bloc", self.codage)
+    # ---------------------------------Deplacements des blocs ---------------------------------
+    def move_down(self, e):  # Deplacement vers le bas d'un bloc (self) pour un etat e
+        _, _, s_line, s_col = e[self.codage] # Decomposition des coordonnees du second petit bloc
+        new_coords = [s_line, s_col, s_line+1, s_col] # Incrementation de la position, une ligne vers le bas
+        print("Deplacement vers le bas du bloc: ", self.codage)
         nouvel_etat = copie(e)
-        nouvel_etat[self.codage] = new_bloc
+        nouvel_etat[self.codage] = new_coords # Remplace les anciennes coordonnees par les nouvelles
         return (nouvel_etat)
 
-    def move_up(self, e):
-        f_line, f_col, _, _ = e[self.codage]
-        new_bloc = [f_line-1, f_col, f_line, f_col]
-        print("Deplacement vers le haut du bloc", self.codage)
+    def move_up(self, e): # Deplacement vers le haut d'un bloc (self) pour un etat e
+        f_line, f_col, _, _ = e[self.codage] # Decomposition des coordonnees du premier petit bloc
+        new_coords = [f_line-1, f_col, f_line, f_col] # Decrementation de la position, une ligne vers le haut
+        print("Deplacement vers le haut du bloc: ", self.codage)
         nouvel_etat = copie(e)
-        nouvel_etat[self.codage] = new_bloc
+        nouvel_etat[self.codage] = new_coords # Remplace les anciennes coordonnees par les nouvelles
         return (nouvel_etat)
 
-    def move_right(self, e):
-        _, _, s_line, s_col = e[self.codage]
-        new_bloc = [s_line, s_col, s_line, s_col+1]
-        print("Deplacement vers la droite du bloc", self.codage)
+    def move_right(self, e): # Deplacement vers le haut d'un bloc (self) pour un etat e
+        _, _, s_line, s_col = e[self.codage] # Decomposition des coordonnees du second petit bloc
+        new_coords = [s_line, s_col, s_line, s_col+1] # Incrementation de la position, une colonne vers la droite
+        print("Deplacement vers la droite du bloc: ", self.codage)
         nouvel_etat = copie(e)
-        nouvel_etat[self.codage] = new_bloc
+        nouvel_etat[self.codage] = new_coords # Remplace les anciennes coordonnees par les nouvelles
         return (nouvel_etat)
 
-    def move_left(self, e):
-        f_line, f_col, _, _ = e[self.codage]
-        new_bloc = [f_line, f_col-1, f_line, f_col]
-        print("Deplacement vers la gauche du bloc", self.codage)
+    def move_left(self, e): # Deplacement vers le bas du bloc pour un etat e
+        f_line, f_col, _, _ = e[self.codage] # Decomposition des coordonnees du premier petit bloc
+        new_coords = [f_line, f_col-1, f_line, f_col] # Decrementation de la position, une colonne vers la gauche
+        print("Deplacement vers la gauche du bloc: ", self.codage)
         nouvel_etat = copie(e)
-        nouvel_etat[self.codage] = new_bloc
+        nouvel_etat[self.codage] = new_coords # Remplace les anciennes coordonnees par les nouvelles
         return (nouvel_etat)
 
+    # ---------------------------------Preconditions---------------------------------
     def precond_down(self, e):
-        # print("codage", self.codage)
-        # print("e", e)
-        # Verifier que le bloc en dessous du 2eme bloc est un 0
         _, f_col, s_line, s_col = e[self.codage]
         # Si le bloc est contre un bord ou s'il n'est pas vertical
         if (s_line == len(empty_board) - 1) or (f_col != s_col):
-            # print("Deplacement vers le bas impossible du bloc", self.codage)
             return False
         else:
-            for bloc in e:
-                for carre in [bloc[:2], bloc[2:]]:
-                    if carre == [s_line+1, s_col]:
+            for coords in e:
+                for bloc in [coords[:2], coords[2:]]:
+                    if bloc == [s_line+1, s_col]:
                         return False
             # Si aucun des bloc de l'etat n'occupe l'espace que l'on souhaite occupe
             return True
 
     def precond_right(self, e):
-        # Verifier que le bloc qui suit le 2eme bloc est un 0
         f_line, _, s_line, s_col = e[self.codage]
         if (s_col == len(empty_board) - 1) or (f_line != s_line):
             return False
         else:
-            for bloc in e:
-                for carre in [bloc[:2], bloc[2:]]:
-                    if carre == [s_line, s_col+1]:
+            for coords in e:
+                for bloc in [coords[:2], coords[2:]]:
+                    if bloc == [s_line, s_col+1]:
                         return False
             # Si aucun des bloc de l'etat n'occupe l'espace que l'on souhaite occupe
             return True
 
     def precond_up(self, e):
-        # Verifier que le bloc avant le 1er bloc est un 0
         f_line, f_col, _, s_col = e[self.codage]
         if (f_line == 0) or (f_col != s_col):
             return False
         else:
-            for bloc in e:
-                for carre in [bloc[:2], bloc[2:]]:
-                    if carre == [f_line-1, f_col]:
+            for coords in e:
+                for bloc in [coords[:2], coords[2:]]:
+                    if bloc == [f_line-1, f_col]:
                         return False
             # Si aucun des bloc de l'etat n'occupe l'espace que l'on souhaite occupe
             return True
 
     def precond_left(self, e):
-        # Verifier que le bloc avant le 1er bloc est un 0
         f_line, f_col, s_line, _ = e[self.codage]
         if (f_col == 0) or (f_line != s_line):
             return False
         else:
-            for bloc in e:
-                for carre in [bloc[:2], bloc[2:]]:
-                    if carre == [f_line, f_col-1]:
+            for coords in e:
+                for bloc in [coords[:2], coords[2:]]:
+                    if bloc == [f_line, f_col-1]:
                         return False
             # Si aucun des bloc de l'etat n'occupe l'espace que l'on souhaite occupe
             return True
 
 
 # ---------------------------------TEST---------------------------------
-# Initialisation
-# * Obstables
+
+# * Initialisation des blocs
 Blocs([1, 0, 1, 1])
 Blocs([0, 2, 1, 2])
-# Blocs([0, 3, 1, 3])
-# Blocs([2, 1, 2, 2])
-# Blocs([3, 1, 3, 2])
+Blocs([0, 3, 1, 3])
+Blocs([2, 1, 2, 2])
+Blocs([3, 1, 3, 2])
 
-etat_initial = Blocs.initial
-# fill_board(etat_initial)
 
-# Rajout des blocs dans la matrice
+# * des operateurs disponibles pour les blocs initialises
 
-# Operateurs disponibles
-operateurs_disponibles = []
 for bloc in Blocs.obstacles:
-    # nom prrecond effet
     op = nouvel_operateur(
         "move down bloc n°"+str(bloc.codage), partial(Blocs.precond_down, bloc), partial(Blocs.move_down, bloc))
     operateurs_disponibles.append(op)
@@ -193,28 +195,24 @@ for bloc in Blocs.obstacles:
         "move right bloc n°"+str(bloc.codage), partial(Blocs.precond_right, bloc), partial(Blocs.move_right, bloc))
     operateurs_disponibles.append(op)
 
-start = time.time()
 
+start = time.time() # Initialisation du Timer
+
+# recherche_en_profondeur_lim_mem
+# recherche_en_profondeur_limitee
+# recherche_en_profondeur_memoire
+# recherche_en_largeur
+
+# Executions de la resolution
 solution = recherche_en_profondeur_limitee(
-    etat_initial, est_final, operateurs_disponibles, 4)
-
+    Blocs.initial, est_final, operateurs_disponibles, 8)
 # solution = (recherche_en_profondeur_lim_mem(
-#     etat_initial, est_final, operateurs_disponibles, 4, []))
-# print(recherche_en_largeur(
-#     etat_initial, est_final, operateurs_disponibles, [], False))
-end = time.time()
+#     Blocs.initial, est_final, operateurs_disponibles, 4, []))
+# solution = (recherche_en_profondeur_memoire(
+#     Blocs.initial, est_final, operateurs_disponibles, []))
+# solution = recherche_en_largeur(Blocs.initial, est_final, operateurs_disponibles, [], False)
+
+end = time.time() # Arret du Timer
 
 
-def show_result(solution, e):
-    if solution != None:
-        print(f"\n__SOLUTION en {len(solution)} coups__\n")
-        for mouvement in solution:
-            e = mouvement(e)
-            fill_board(e)
-        print(end - start)
-    else:
-        print("Pas de solution")
-        print(end - start)
-
-
-show_result(solution, etat_initial)
+show_result(solution, Blocs.initial)

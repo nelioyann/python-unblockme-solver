@@ -141,7 +141,7 @@ def recherche_en_profondeur_memoire(e, est_final, os, déjà):
             chemin = recherche_en_profondeur_memoire(ne, est_final, os, déjà)
             if chemin != None:
                 # print([nom_operateur(o)] + chemin)
-                return [nom_operateur(o)] + chemin
+                return [action_operateur(o)] + chemin
         return None
 
 
@@ -169,6 +169,7 @@ def recherche_en_profondeur_lim_mem(e, est_final, os, prof, déjà):
 def recherche_en_largeur(e, est_final, os, fermés, succes):
     ouverts = [e]
     fermes = []
+    solution = []
     while (ouverts != [] and not succes):
         noeud = ouverts[0]
         if est_final(noeud):
@@ -185,8 +186,11 @@ def recherche_en_largeur(e, est_final, os, fermés, succes):
                 fill_board(sub_noeud)
                 if (sub_noeud not in ouverts) and (sub_noeud not in fermes):
                     ouverts.append(sub_noeud)
+                    solution.append(action_operateur(o))
     print("Ouverts = ", ouverts)
-    print("Fermes = ", fermes)
+    print("Solution en ", len(fermes))
     for k in fermes:
         fill_board(k)
+    fill_board(ouverts[0])
+    # return (solution)
 # recherche_en_largeur(e, est_final, os, [], False)
