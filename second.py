@@ -4,7 +4,8 @@
 # ** Etat = [[],[],[],[]]
 
 # Projet Unblock Me, IA
-import time
+
+import time, os
 from functools import partial
 from resolution import recherche_en_profondeur_lim_mem, recherche_en_profondeur, recherche_en_profondeur_limitee, nouvel_operateur, recherche_en_profondeur_memoire, recherche_en_largeur
 
@@ -29,19 +30,19 @@ def est_final(e):
         return(False)
 
 #! Affiche un plateau de jeu
-def show(matrice):
-    print("- -" + " -"*len(matrice))
-    for bloc in matrice:
+def show(plateau):
+    print("- -" + " -"*len(plateau))
+    for bloc in plateau:
         ligne = " "
         for element in bloc:
             ligne += str(element) + " "
         print(f"|{ligne}|")
-    print("- -" + " -"*len(matrice))
+    print("- -" + " -"*len(plateau))
 
 
-def copie(matrice):
+def copie(e):
     copied = []
-    for bloc in matrice:
+    for bloc in e:
         coord_list = []
         for coord in bloc:
             coord_list.append(coord)
@@ -62,12 +63,17 @@ def fill_board(etat):
 
 def show_result(solution, e):
     if solution != None:
-        print(f"\n__SOLUTION en {len(solution)} coups__\n")
+        os.system("cls")
+        print("Etat Initial")
         fill_board(e)
+        time.sleep(1.5)
         for mouvement in solution:
+            os.system("cls")
             e = mouvement(e)
             fill_board(e)
+            time.sleep(1.5)
         print(f"Temps mis: {end - start}s")
+        print(f"\n__SOLUTION en {len(solution)} coups__\n")
     else:
         print("Pas de solution")
         print(end - start)
@@ -174,8 +180,8 @@ class Blocs:
 # * Initialisation des blocs
 Blocs([1, 0, 1, 1])
 Blocs([0, 2, 1, 2])
-Blocs([0, 3, 1, 3])
-Blocs([2, 1, 2, 2])
+# Blocs([0, 3, 1, 3])
+# Blocs([2, 1, 2, 2])
 Blocs([3, 1, 3, 2])
 
 
@@ -204,15 +210,18 @@ start = time.time() # Initialisation du Timer
 # recherche_en_largeur
 
 # Executions de la resolution
-solution = recherche_en_profondeur_limitee(
-    Blocs.initial, est_final, operateurs_disponibles, 8)
+# solution = recherche_en_profondeur_limitee(
+#     Blocs.initial, est_final, operateurs_disponibles, 8)
 # solution = (recherche_en_profondeur_lim_mem(
 #     Blocs.initial, est_final, operateurs_disponibles, 4, []))
 # solution = (recherche_en_profondeur_memoire(
 #     Blocs.initial, est_final, operateurs_disponibles, []))
-# solution = recherche_en_largeur(Blocs.initial, est_final, operateurs_disponibles, [], False)
+solution = recherche_en_largeur(Blocs.initial, est_final, operateurs_disponibles, [], False)
 
 end = time.time() # Arret du Timer
 
+# Affichage de la resolution
+# show_result(solution, Blocs.initial)
+# print(Blocs.initial)
 
-show_result(solution, Blocs.initial)
+# etat = [[1, 0, 1, 1], [0, 2, 1, 2]]

@@ -74,11 +74,11 @@ def operateurs_applicables(os, e):
         if operateur_applicable(o, e):
             res.append(o)
     # print("")
-    print("Liste des operateurs applicables à l'état suivant: ")
-    fill_board(e)
-    print("Operateurs applicables: ")
-    for x in res:
-        print("-", x[0])
+    # print("Liste des operateurs applicables à l'état suivant: ")
+    # fill_board(e)
+    # print("Operateurs applicables: ")
+    # for x in res:
+    #     print("-", x[0])
     return res
 
 
@@ -121,8 +121,6 @@ def recherche_en_profondeur_limitee(e, est_final, os, profondeur):
             if chemin != None:
                 return [action_operateur(o)] + chemin
         return None
-
-
 # recherche avec mémoire
 def recherche_en_profondeur_memoire(e, est_final, os, déjà):
     if est_final(e):
@@ -143,8 +141,6 @@ def recherche_en_profondeur_memoire(e, est_final, os, déjà):
                 # print([nom_operateur(o)] + chemin)
                 return [action_operateur(o)] + chemin
         return None
-
-
 # recherche en profondeur limitée et avec mémoire
 def recherche_en_profondeur_lim_mem(e, est_final, os, prof, déjà):
     if est_final(e):
@@ -166,31 +162,35 @@ def recherche_en_profondeur_lim_mem(e, est_final, os, prof, déjà):
         return None
 
 
-def recherche_en_largeur(e, est_final, os, fermés, succes):
-    ouverts = [e]
-    fermes = []
-    solution = []
+def recherche_en_largeur(e, est_final, os, fermes, succes):
+    ouverts = [e] 
     while (ouverts != [] and not succes):
         noeud = ouverts[0]
+        print("\n--Noeud actuel--")
+        fill_board(noeud)
         if est_final(noeud):
             print("FINAL")
             succes = True
+            # return []
         else:
-            print(ouverts)
             ouverts.remove(noeud)
             fermes.append(noeud)
             operateurs = operateurs_applicables(os, noeud)
             for o in operateurs:
-                sub_noeud = applique_operateur(o, noeud)
-                print("Sub Noeud", sub_noeud)
-                fill_board(sub_noeud)
-                if (sub_noeud not in ouverts) and (sub_noeud not in fermes):
-                    ouverts.append(sub_noeud)
-                    solution.append(action_operateur(o))
-    print("Ouverts = ", ouverts)
-    print("Solution en ", len(fermes))
-    for k in fermes:
-        fill_board(k)
-    fill_board(ouverts[0])
+                successeur = applique_operateur(o, noeud)
+                print("Successeur = ", successeur)
+                fill_board(successeur)
+                if (successeur not in ouverts) and (successeur not in fermes):
+                    ouverts.append(successeur)
+                #     chemin = recherche_en_largeur(successeur, est_final, os, fermes, False)
+                #     if chemin != None:
+                #         return [nom_operateur(o)] + chemin
+                # return None
+                    # solution.append(action_operateur(o))
+    # print("Ouverts = ", ouverts)
+    # print("Fermes ", fermes)
+    # for k in fermes:
+    #     fill_board(k)
+    # fill_board(ouverts[0])
     # return (solution)
 # recherche_en_largeur(e, est_final, os, [], False)
