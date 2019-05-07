@@ -1,5 +1,4 @@
 def test():
-    while True:
-        return True
+    a = 0
 
 print(test())

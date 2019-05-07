@@ -5,39 +5,69 @@
 
 # Projet Unblock Me, IA
 
-import time, os
+import time
+from os import system
 from functools import partial
 from resolution import recherche_en_profondeur_lim_mem, recherche_en_profondeur, recherche_en_profondeur_limitee, nouvel_operateur, recherche_en_profondeur_memoire, recherche_en_largeur
-
+from termcolor import colored, cprint
 
 # ---------------------------------VARS---------------------------------
 # Representation de la grille de jeu vide
 #! Grille 4x4, creation dynamic ?
-empty_board = [	['x', 'x', 'x', 'x'],
-                ['x', 'x', 'x', 'x'],
-                ['x', 'x', 'x', 'x'],
-                ['x', 'x', 'x', 'x']
-                ]
+
+
+def make_board(size):
+    board = []
+    line = []
+    for _ in range(size):
+        line.append('●')
+    for _ in range(size):
+        board.append(line)
+    return board
+
 
 operateurs_disponibles = []
 # ---------------------------------FONCTIONS---------------------------------
 # Verifie si un etat correspond a une fin de partie
-def est_final(e):
+
+
+def est_final(board_size, e):
     # Si le bloc principal se trouve en position de fin de partie
-    if (e[0] == [1, 2, 1, 3]):
+    # if (e[0] == [1, 2, 1, 3]):  # [Size = 4]
+    if (e[0] == [1, board_size-2, 1, board_size-1]):  # [Size = 5]
         return (True)
     else:
         return(False)
 
 #! Affiche un plateau de jeu
+
+
+# pion_rouge = colored("●", "red", attrs=['bold'])
+# pion_blanc = colored("●", "white", attrs=['bold'])
+
+palette = ["red", "yellow", "blue", "green", "magenta", "cyan", "white"]
+
+
 def show(plateau):
     print("- -" + " -"*len(plateau))
-    for bloc in plateau:
-        ligne = " "
-        for element in bloc:
-            ligne += str(element) + " "
-        print(f"|{ligne}|")
+    for line in plateau:
+        print("|", end=" ")
+        for element in line:
+            if element == "●":
+                print(" ", end=" ")
+            else:
+                cprint("●", palette[element], attrs=['bold'], end=" ")
+        print("|")
     print("- -" + " -"*len(plateau))
+
+# def show(plateau):
+#     print("- -" + " -"*len(plateau))
+#     for bloc in plateau:
+#         ligne = " "
+#         for element in bloc:
+#             ligne += str(element) + " "
+#         print(f"|{ligne}|")
+#     print("- -" + " -"*len(plateau))
 
 
 def copie(e):
@@ -50,78 +80,104 @@ def copie(e):
     return(copied)
 
 # * Construction du plateau a partir d'un etat et d'une grille vide
+
+
 def fill_board(etat):
-    instance = copie(empty_board)
+    board = copie(empty_board)
     for index, bloc in enumerate(etat):
         # Decomposition des coordonnees
         f_line, f_col, s_line, s_col = bloc
         # Ajouts du marqueur(index) du bloc dans la grille
-        instance[f_line][f_col] = index
-        instance[s_line][s_col] = index
+        board[f_line][f_col] = index
+        board[s_line][s_col] = index
     # Affichage du plateau nouvellement forme
-    show(instance)
+    return board
+
 
 def show_result(solution, e):
+    states = []
     if solution != None:
-        os.system("cls")
+        system("cls")
+        show(fill_board(e))
         print("Etat Initial")
-        fill_board(e)
-        time.sleep(1.5)
+        # input()
+        time.sleep(2)
         for mouvement in solution:
-            os.system("cls")
+            system("cls")
             e = mouvement(e)
-            fill_board(e)
-            time.sleep(1.5)
-        print(f"Temps mis: {end - start}s")
+            states.append(e)
+            show(fill_board(e))
+            time.sleep(0.5)
+            # input("Appuyer Entree pour passer au mouvement suivant...")
+        print(f"Temps mis: {(end - start)}s")
         print(f"\n__SOLUTION en {len(solution)} coups__\n")
+        for etat in states:
+            if states.count(etat) != 1:
+                print(f"Etat: {etat} se repete")
     else:
         print("Pas de solution")
         print(end - start)
 
 # --------------------------------- Operations sur les blocs---------------------------------
+
+
 class Blocs:
     codage = 0  # valeur qui represente l'instance du bloc dans la matrice
     obstacles = []  # liste de toutes les instances
-    initial = [] # liste des coordonees de chaque bloc de l'etat initial
+    initial = []  # liste des coordonees de chaque bloc de l'etat initial
 
     # Initialisation d'une bloc depend des coords (x1,y1,x2,y2) de ses 2 petits blocs
     def __init__(self, bloc_coord):
-        self.codage = Blocs.codage # Codage est le label associe au bloc
+        self.codage = Blocs.codage  # Codage est le label associe au bloc
         Blocs.codage += 1
-        Blocs.obstacles.append(self) # ajout de l'instance actuelle a la liste d'obstacles
-        Blocs.initial.append(bloc_coord) # ajout des coordonnes de l'instance a la liste de coordonnees
+        # ajout de l'instance actuelle a la liste d'obstacles
+        Blocs.obstacles.append(self)
+        # ajout des coordonnes de l'instance a la liste de coordonnees
+        Blocs.initial.append(bloc_coord)
 
     # ---------------------------------Deplacements des blocs ---------------------------------
     def move_down(self, e):  # Deplacement vers le bas d'un bloc (self) pour un etat e
-        _, _, s_line, s_col = e[self.codage] # Decomposition des coordonnees du second petit bloc
-        new_coords = [s_line, s_col, s_line+1, s_col] # Incrementation de la position, une ligne vers le bas
-        print("Deplacement vers le bas du bloc: ", self.codage)
+        # Decomposition des coordonnees du second petit bloc
+        _, _, s_line, s_col = e[self.codage]
+        # Incrementation de la position, une ligne vers le bas
+        new_coords = [s_line, s_col, s_line+1, s_col]
+        # print("Deplacement vers le bas du bloc: ", self.codage)
         nouvel_etat = copie(e)
-        nouvel_etat[self.codage] = new_coords # Remplace les anciennes coordonnees par les nouvelles
+        # Remplace les anciennes coordonnees par les nouvelles
+        nouvel_etat[self.codage] = new_coords
         return (nouvel_etat)
 
-    def move_up(self, e): # Deplacement vers le haut d'un bloc (self) pour un etat e
-        f_line, f_col, _, _ = e[self.codage] # Decomposition des coordonnees du premier petit bloc
-        new_coords = [f_line-1, f_col, f_line, f_col] # Decrementation de la position, une ligne vers le haut
-        print("Deplacement vers le haut du bloc: ", self.codage)
+    def move_up(self, e):  # Deplacement vers le haut d'un bloc (self) pour un etat e
+        # Decomposition des coordonnees du premier petit bloc
+        f_line, f_col, _, _ = e[self.codage]
+        # Decrementation de la position, une ligne vers le haut
+        new_coords = [f_line-1, f_col, f_line, f_col]
+        # print("Deplacement vers le haut du bloc: ", self.codage)
         nouvel_etat = copie(e)
-        nouvel_etat[self.codage] = new_coords # Remplace les anciennes coordonnees par les nouvelles
+        # Remplace les anciennes coordonnees par les nouvelles
+        nouvel_etat[self.codage] = new_coords
         return (nouvel_etat)
 
-    def move_right(self, e): # Deplacement vers le haut d'un bloc (self) pour un etat e
-        _, _, s_line, s_col = e[self.codage] # Decomposition des coordonnees du second petit bloc
-        new_coords = [s_line, s_col, s_line, s_col+1] # Incrementation de la position, une colonne vers la droite
-        print("Deplacement vers la droite du bloc: ", self.codage)
+    def move_right(self, e):  # Deplacement vers le haut d'un bloc (self) pour un etat e
+        # Decomposition des coordonnees du second petit bloc
+        _, _, s_line, s_col = e[self.codage]
+        # Incrementation de la position, une colonne vers la droite
+        new_coords = [s_line, s_col, s_line, s_col+1]
+        # print("Deplacement vers la droite du bloc: ", self.codage)
         nouvel_etat = copie(e)
-        nouvel_etat[self.codage] = new_coords # Remplace les anciennes coordonnees par les nouvelles
+        # Remplace les anciennes coordonnees par les nouvelles
+        nouvel_etat[self.codage] = new_coords
         return (nouvel_etat)
 
-    def move_left(self, e): # Deplacement vers le bas du bloc pour un etat e
-        f_line, f_col, _, _ = e[self.codage] # Decomposition des coordonnees du premier petit bloc
-        new_coords = [f_line, f_col-1, f_line, f_col] # Decrementation de la position, une colonne vers la gauche
-        print("Deplacement vers la gauche du bloc: ", self.codage)
+    def move_left(self, e):  # Deplacement vers le bas du bloc pour un etat e
+        # Decomposition des coordonnees du premier petit bloc
+        f_line, f_col, _, _ = e[self.codage]
+        # Decrementation de la position, une colonne vers la gauche
+        new_coords = [f_line, f_col-1, f_line, f_col]
+        # print("Deplacement vers la gauche du bloc: ", self.codage)
         nouvel_etat = copie(e)
-        nouvel_etat[self.codage] = new_coords # Remplace les anciennes coordonnees par les nouvelles
+        # Remplace les anciennes coordonnees par les nouvelles
+        nouvel_etat[self.codage] = new_coords
         return (nouvel_etat)
 
     # ---------------------------------Preconditions---------------------------------
@@ -176,14 +232,15 @@ class Blocs:
 
 
 # ---------------------------------TEST---------------------------------
+empty_board = make_board(5)
 
 # * Initialisation des blocs
 Blocs([1, 0, 1, 1])
-Blocs([0, 2, 1, 2])
-# Blocs([0, 3, 1, 3])
-# Blocs([2, 1, 2, 2])
-Blocs([3, 1, 3, 2])
-
+Blocs([2, 0, 3, 0])
+Blocs([1, 2, 2, 2])
+Blocs([4, 1, 4, 2])
+Blocs([2, 3, 2, 4])
+Blocs([0, 4, 1, 4])
 
 # * des operateurs disponibles pour les blocs initialises
 
@@ -202,26 +259,19 @@ for bloc in Blocs.obstacles:
     operateurs_disponibles.append(op)
 
 
-start = time.time() # Initialisation du Timer
-
-# recherche_en_profondeur_lim_mem
-# recherche_en_profondeur_limitee
-# recherche_en_profondeur_memoire
-# recherche_en_largeur
+start = time.time()  # Initialisation du Timer
 
 # Executions de la resolution
 # solution = recherche_en_profondeur_limitee(
-#     Blocs.initial, est_final, operateurs_disponibles, 8)
-# solution = (recherche_en_profondeur_lim_mem(
-#     Blocs.initial, est_final, operateurs_disponibles, 4, []))
+#     Blocs.initial, partial(est_final, len(empty_board)), operateurs_disponibles, 9)
 # solution = (recherche_en_profondeur_memoire(
-#     Blocs.initial, est_final, operateurs_disponibles, []))
-solution = recherche_en_largeur(Blocs.initial, est_final, operateurs_disponibles, [], False)
+#     Blocs.initial, partial(est_final, len(empty_board)), operateurs_disponibles, []))
+solution = recherche_en_largeur(
+    Blocs.initial, partial(est_final, len(empty_board)), operateurs_disponibles, [], False)
 
-end = time.time() # Arret du Timer
+end = time.time()  # Arret du Timer 
 
 # Affichage de la resolution
-# show_result(solution, Blocs.initial)
+show_result(solution, Blocs.initial)
 # print(Blocs.initial)
-
-# etat = [[1, 0, 1, 1], [0, 2, 1, 2]]
+# show(fill_board(Blocs.initial))
