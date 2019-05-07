@@ -2,40 +2,40 @@ from random import shuffle
 
 # construction d'un nouvel opérateur
 
-empty_board = [['x', 'x', 'x', 'x'], ['x', 'x', 'x', 'x'],
-               ['x', 'x', 'x', 'x'], ['x', 'x', 'x', 'x']]
+# empty_board = [['x', 'x', 'x', 'x'], ['x', 'x', 'x', 'x'],
+#                ['x', 'x', 'x', 'x'], ['x', 'x', 'x', 'x']]
 
 
-def show(matrice):
-    print("- - - - - -")
-    for bloc in matrice:
-        ligne = " "
-        for element in bloc:
-            ligne += str(element) + " "
-        print(f"|{ligne}|")
-    print("- - - - - -")
+# def show(matrice):
+#     print("- - - - - -")
+#     for bloc in matrice:
+#         ligne = " "
+#         for element in bloc:
+#             ligne += str(element) + " "
+#         print(f"|{ligne}|")
+#     print("- - - - - -")
 
 
-def copie(matrice):
-    copied = []
-    for bloc in matrice:
-        coord_list = []
-        for coord in bloc:
-            coord_list.append(coord)
-        copied.append(coord_list)
-    return (copied)
+# def copie(matrice):
+#     copied = []
+#     for bloc in matrice:
+#         coord_list = []
+#         for coord in bloc:
+#             coord_list.append(coord)
+#         copied.append(coord_list)
+#     return (copied)
 
 
 # * Forme la grille a partir d'un etat
 
 
-def fill_board(etat):
-    instance = copie(empty_board)
-    for index, bloc in enumerate(etat):
-        f_line, f_col, s_line, s_col = bloc
-        instance[f_line][f_col] = index
-        instance[s_line][s_col] = index
-    show(instance)
+# def fill_board(etat):
+#     instance = copie(empty_board)
+#     for index, bloc in enumerate(etat):
+#         f_line, f_col, s_line, s_col = bloc
+#         instance[f_line][f_col] = index
+#         instance[s_line][s_col] = index
+#     show(instance)
 
 
 def nouvel_operateur(nom, precond, effet):
