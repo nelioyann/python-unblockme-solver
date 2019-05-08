@@ -1,43 +1,3 @@
-from random import shuffle
-
-# construction d'un nouvel opérateur
-
-# empty_board = [['x', 'x', 'x', 'x'], ['x', 'x', 'x', 'x'],
-#                ['x', 'x', 'x', 'x'], ['x', 'x', 'x', 'x']]
-
-
-# def show(matrice):
-#     print("- - - - - -")
-#     for bloc in matrice:
-#         ligne = " "
-#         for element in bloc:
-#             ligne += str(element) + " "
-#         print(f"|{ligne}|")
-#     print("- - - - - -")
-
-
-# def copie(matrice):
-#     copied = []
-#     for bloc in matrice:
-#         coord_list = []
-#         for coord in bloc:
-#             coord_list.append(coord)
-#         copied.append(coord_list)
-#     return (copied)
-
-
-# * Forme la grille a partir d'un etat
-
-
-# def fill_board(etat):
-#     instance = copie(empty_board)
-#     for index, bloc in enumerate(etat):
-#         f_line, f_col, s_line, s_col = bloc
-#         instance[f_line][f_col] = index
-#         instance[s_line][s_col] = index
-#     show(instance)
-
-
 def nouvel_operateur(nom, precond, effet):
     return (nom, precond, effet)
 
@@ -58,8 +18,6 @@ def action_operateur(o):
 
 
 # est-ce qu'un opérateur o est applicable à un état e ?
-
-
 def operateur_applicable(o, e):
     precond = precond_operateur(o)
 
@@ -67,22 +25,12 @@ def operateur_applicable(o, e):
 
 
 # sélection des opérateurs de os qui sont applicables à e
-
-
 def operateurs_applicables(os, e):
     res = []
     for o in os:
         if operateur_applicable(o, e):
             res.append(o)
-    # print("")
-    # print("Liste des operateurs applicables à l'état suivant: ")
-    # fill_board(e)
-    # print("Operateurs applicables: ")
-    # for x in res:
-    #     print("-", x[0])
-    # res.reverse()
     return res
-
 
 # application d'un opérateur o à un état e
 def applique_operateur(o, e):
@@ -118,16 +66,13 @@ def recherche_en_profondeur_limitee(e, est_final, os, profondeur):
         operateurs = operateurs_applicables(os, e)
         for o in operateurs:
             ne = applique_operateur(o, e)
-            chemin = recherche_en_profondeur_limitee(ne, est_final, os,
-                                                     profondeur - 1)
+            chemin = recherche_en_profondeur_limitee(ne, est_final, os, profondeur - 1)
             if chemin != None:
                 return [action_operateur(o)] + chemin
         return None
 
 
 # recherche avec mémoire
-
-
 def recherche_en_profondeur_memoire(e, est_final, os, déjà):
     if est_final(e):
         return []
@@ -146,8 +91,6 @@ def recherche_en_profondeur_memoire(e, est_final, os, déjà):
 
 
 # recherche en profondeur limitée et avec mémoire
-
-
 def recherche_en_profondeur_lim_mem(e, est_final, os, prof, déjà):
     if est_final(e):
         return []
@@ -167,12 +110,14 @@ def recherche_en_profondeur_lim_mem(e, est_final, os, prof, déjà):
                 return [action_operateur(o)] + chemin
         return None
 
-
+# Recherche en largeur
+# Cette classe conservera le parent de chaque noeud parcouru
+# Une fois qu'on aura trouve le noeud solution on effectuera une remontee progressive des parents jusqu'au noeud racine (label = 0)
 class Noeud:
     label = -1  #pour que label commence a 0 une fois initialisee
-    arbre = [] #instances
-    mouvements = []
-    etats = []
+    arbre = [] # instances des noeuds
+    mouvements = [] # mouvements/operateurs a l'origine de chaque instance (arbre et mouvemnts sont de meme taille)
+    etats = [] # coordonnees des blocs pour chaque instances/noeuds parcourus
 
     def __init__(self, etat, operateur):
         Noeud.label += 1
@@ -183,105 +128,54 @@ class Noeud:
         Noeud.mouvements.append(operateur)
 
 
-# ouverts est la file
+# ouverts est la file d'attente
 # fermes -> noeud parcourus
 def recherche_en_largeur(etat_initial, est_final, os, fermes, succes):
     ouverts = [etat_initial]
     Noeud(etat_initial, None)
     count = -1
     while (ouverts != [] and not succes):
-        count += 1
+        count += 1 # Nombre de loop effectues
         noeud = ouverts[0]  # First In First Out
-        # current_node = Noeud()
         if est_final(noeud):
-            # print()
+            # On a acces qu'aux coordonnees de l'etat final et non pas a son instance
+            # On peut retrouver le label du noeud en le situant dans la listes des etats
             final_label = Noeud.etats.index(noeud)
+            # On retrouve l'instance grace au label
             noeud_final = Noeud.arbre[final_label]
-            # noeud_final.parent = count
-            # print(f"FINAL parent est n{noeud_final.parent}")
-            # print(f"FINAL noeud n{count}")
-            # print(f"Taille fermes = {len(fermes)}")
-            parents = []
+            parents = [] # Liste des labels de tous les parents
             label = noeud_final.label
             parents.append(label)
+            # Tant que le label de la racine n'est pas atteint
             while label !=0 :
+                # Recupere le parent du label actuel
                 pere = Noeud.arbre[label].parent
+                # Le parent devient le nouveau label actuel
                 label = pere
+                # On rajoute le parent a la liste
                 parents.append(pere)
+            # On inverse la liste pour qu'elle commence par la racine
             parents.reverse()
             # print("Padre", parents[1:])
-            solution = []
+            solution = [] # Liste des mouvements qui menent a la solution
+            # L'etat initial parents[0] n'est a l'origine d'aucun operateur, on l'omets donc
             for label in parents[1:]:
                 solution.append(Noeud.mouvements[label])
-            # print("Solution", solution)
             return solution
-            # succes = True
         else:
             del ouverts[0]
-            # print(f"OUVERTS = {ouverts}")
             fermes.append(noeud)
-            # print(f"Taille fermes = {len(fermes)}")
             operateurs = operateurs_applicables(os, noeud)
             successeurs = []
-            # print()
-            # print("Applicables")
             for operateur in operateurs:
                 successeurs.append(applique_operateur(operateur, noeud))
-                # print(f"- {nom_operateur(operateur)}")
-            # Pour chaque successuer du noeud
+            # Label du parent des prochains noeuds successeurs
             parent_id = count
-            # print(f"Id du parent = {parent_id}")
-            # print(f"Taille fermes = {len(fermes)}")
+            # Pour chaque successuer du noeud et chaque operateur qui lui est associe
             for operateur, successeur in zip(operateurs, successeurs):
                 # Si ce successeur ne fait pas partie de la file d'attente et s'il est nouveau
                 if (successeur not in ouverts) and (successeur not in fermes):
-                    # print(f"Operateur selectionne = {nom_operateur(operateur)}")
-                        
                     # Rajouter ce noeud en fin de file d'attente
                     ouverts.append(successeur)
-                    noeud_successeur = Noeud(successeur,action_operateur(operateur) )
-                    # print(f"Noeud initialise= {noeud_successeur.label}")
+                    noeud_successeur = Noeud(successeur, action_operateur(operateur) )
                     noeud_successeur.parent = parent_id
-                    # print(f"Le parent du noeud {noeud_successeur.label} est {parent_id}")
-                    # successeur_id = Noeud.label
-                    # print("Noeud successuer Initialisee")
-                    # Noeud(successeur).parent = noeud
-                    # Noeud(successeur).parent = Noeud(noeud)
-
-                    # chemin = recherche_en_largeur(
-                    #     successeur, est_final, os, fermes, False)
-                    # print(nom_operateur(operateur))
-                    # if chemin != None:
-                    #     return [action_operateur(operateur)] + chemin
-                    # return None
-    
-
-# def recherche_en_largeur(e, est_final, os, fermes, succes):
-#     ouverts = [e]
-#     while (ouverts != [] and not succes):
-#         noeud = ouverts[0]
-#         if est_final(noeud):
-#             # print(f"Nombre de noeuds parcourus = {len(ouverts)}")
-#             print("FINAL")
-#             return []
-#         else:
-#             ouverts.remove(noeud)
-#             fermes.append(noeud)
-#             print(f"Taille fermes = {len(fermes)}")
-#             operateurs = operateurs_applicables(os, noeud)
-#             print("Applicables")
-#             for op in operateurs:
-#                 print(nom_operateur(op))
-#             for o in operateurs:
-#                 print(f"Operateur selectionne = {nom_operateur(op)}")
-#                 successeur = applique_operateur(o, noeud)
-#                 if (successeur not in ouverts) and (successeur not in fermes):
-#                     ouverts.append(successeur)
-#                     chemin = recherche_en_largeur(
-#                         successeur, est_final, os, fermes, False)
-#                     print(nom_operateur(o))
-#                     if chemin != None:
-#                         return [action_operateur(o)] + chemin
-#                     return None
-
-# recherche_en_largeur(e, est_final, os, [], False)

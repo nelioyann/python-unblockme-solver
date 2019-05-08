@@ -3,73 +3,50 @@
 # ? Changement de la nature des etats
 # ** Etat = [[],[],[],[]]
 
-# Projet Unblock Me, IA
-
+# Projet Unblock Me, IA, resolution
 import time
 from os import system
 from functools import partial
-from resolution import recherche_en_profondeur_lim_mem, recherche_en_profondeur, recherche_en_profondeur_limitee, nouvel_operateur, recherche_en_profondeur_memoire, recherche_en_largeur
+from resolution import *
 from termcolor import colored, cprint
 
-# ---------------------------------VARS---------------------------------
-# Representation de la grille de jeu vide
-#! Grille 4x4, creation dynamic ?
-
-
+# ---------------------------------FONCTIONS---------------------------------
+# Construction de la grille de jeu en fonction de la taille souhaitee
 def make_board(size):
     board = []
     line = []
+    # On cree une ligne qui contiendra size elements
     for _ in range(size):
         line.append('●')
+    # On cree une matrice qui contiendra size ligne
     for _ in range(size):
         board.append(line)
     return board
 
-
-operateurs_disponibles = []
-# ---------------------------------FONCTIONS---------------------------------
-# Verifie si un etat correspond a une fin de partie
-
-
+# Verifie si un etat correspond a une fin de partie, depend de la taille du plateau
 def est_final(board_size, e):
-    # Si le bloc principal se trouve en position de fin de partie
-    # if (e[0] == [1, 2, 1, 3]):  # [Size = 4]
-    if (e[0] == [1, board_size-2, 1, board_size-1]):  # [Size = 5]
+    # Si le bloc directeur se trouve contre la paroi droite
+    if (e[0] == [1, board_size-2, 1, board_size-1]):  
         return (True)
     else:
         return(False)
 
-#! Affiche un plateau de jeu
-
-
-# pion_rouge = colored("●", "red", attrs=['bold'])
-# pion_blanc = colored("●", "white", attrs=['bold'])
-
-palette = ["red", "yellow", "blue", "green", "magenta", "cyan", "white"]
-
-
+# Affiche le plateau en assignant une couleur a chaque bloc
 def show(plateau):
-    print("- -" + " -"*len(plateau))
+    # Palette de couleur utilisee pour differencier les blocs
+    palette = ["red", "yellow", "blue", "green", "grey", "magenta", "cyan", "white"] 
+    print("- - -" + " -"*len(plateau)) 
     for line in plateau:
-        print("|", end=" ")
+        print("| ", end=" ")
         for element in line:
             if element == "●":
                 print(" ", end=" ")
-            else:
+            else: # Si l'element est un chiffre
                 cprint("●", palette[element], attrs=['bold'], end=" ")
-        print("|")
-    print("- -" + " -"*len(plateau))
+        print(" |")
+    print("- - -" + " -"*len(plateau))
 
-# def show(plateau):
-#     print("- -" + " -"*len(plateau))
-#     for bloc in plateau:
-#         ligne = " "
-#         for element in bloc:
-#             ligne += str(element) + " "
-#         print(f"|{ligne}|")
-#     print("- -" + " -"*len(plateau))
-
-
+# Renvoie une copie de e
 def copie(e):
     copied = []
     for bloc in e:
@@ -79,9 +56,7 @@ def copie(e):
         copied.append(coord_list)
     return(copied)
 
-# * Construction du plateau a partir d'un etat et d'une grille vide
-
-
+# Construit un plateau a partir d'un etat et d'une grille vide
 def fill_board(etat):
     board = copie(empty_board)
     for index, bloc in enumerate(etat):
@@ -90,39 +65,48 @@ def fill_board(etat):
         # Ajouts du marqueur(index) du bloc dans la grille
         board[f_line][f_col] = index
         board[s_line][s_col] = index
-    # Affichage du plateau nouvellement forme
     return board
 
-
+# Affiche sequentiellement les plateau menants a la solution
 def show_result(solution, e):
-    states = []
+    states = [] # Liste des etats, permets de voir s'il y'a des mouvements repetitifs
     if solution != None:
         system("cls")
         show(fill_board(e))
         print("Etat Initial")
-        # input()
+        input()
         time.sleep(2)
         for mouvement in solution:
             system("cls")
-            e = mouvement(e)
+            e = mouvement(e) # Produit un nouvel etat
             states.append(e)
-            show(fill_board(e))
-            time.sleep(0.5)
-            # input("Appuyer Entree pour passer au mouvement suivant...")
-        print(f"Temps mis: {(end - start)}s")
-        print(f"\n__SOLUTION en {len(solution)} coups__\n")
+            show(fill_board(e)) # Affiche le plateau
+            # time.sleep(0.5)
+        print(f"Temps mis: {(end - start)*1000} ms")
+        print(f"Solution en {len(solution)} coups")
         for etat in states:
             if states.count(etat) != 1:
                 print(f"Etat: {etat} se repete")
     else:
         print("Pas de solution")
-        print(end - start)
 
+# Constructions des operateurs disponibles pour les blocs initialises
+def make_operateurs(blocs):
+    operateurs = [] # Liste des operateurs disponibles
+    for bloc in blocs:
+        op = nouvel_operateur("move down bloc n°"+str(bloc.codage), partial(Blocs.precond_down, bloc), partial(Blocs.move_down, bloc))
+        operateurs.append(op)
+        op = nouvel_operateur("move up bloc n°"+str(bloc.codage), partial(Blocs.precond_up, bloc), partial(Blocs.move_up, bloc))
+        operateurs.append(op)
+        op = nouvel_operateur("move left bloc n°"+str(bloc.codage), partial(Blocs.precond_left, bloc), partial(Blocs.move_left, bloc))
+        operateurs.append(op)
+        op = nouvel_operateur("move right bloc n°"+str(bloc.codage), partial(Blocs.precond_right, bloc), partial(Blocs.move_right, bloc))
+        operateurs.append(op)
+    return operateurs
 # --------------------------------- Operations sur les blocs---------------------------------
 
-
 class Blocs:
-    codage = 0  # valeur qui represente l'instance du bloc dans la matrice
+    codage = 0  # valeur qui represente l'index du bloc
     obstacles = []  # liste de toutes les instances
     initial = []  # liste des coordonees de chaque bloc de l'etat initial
 
@@ -132,7 +116,7 @@ class Blocs:
         Blocs.codage += 1
         # ajout de l'instance actuelle a la liste d'obstacles
         Blocs.obstacles.append(self)
-        # ajout des coordonnes de l'instance a la liste de coordonnees
+        # ajout des coordonnees de l'instance a la liste de coordonnees initiale
         Blocs.initial.append(bloc_coord)
 
     # ---------------------------------Deplacements des blocs ---------------------------------
@@ -232,46 +216,33 @@ class Blocs:
 
 
 # ---------------------------------TEST---------------------------------
+# Creation de la grille de jeu
 empty_board = make_board(5)
 
-# * Initialisation des blocs
+# Initialisation des blocs
 Blocs([1, 0, 1, 1])
 Blocs([2, 0, 3, 0])
 Blocs([1, 2, 2, 2])
 Blocs([4, 1, 4, 2])
 Blocs([2, 3, 2, 4])
 Blocs([0, 4, 1, 4])
+Blocs([0, 3, 1, 3])
+Blocs([2, 1, 3, 1])
 
-# * des operateurs disponibles pour les blocs initialises
+# Creation des operateurs pour les blocs initialises
+operateurs_disponibles = make_operateurs(Blocs.obstacles)
 
-for bloc in Blocs.obstacles:
-    op = nouvel_operateur(
-        "move down bloc n°"+str(bloc.codage), partial(Blocs.precond_down, bloc), partial(Blocs.move_down, bloc))
-    operateurs_disponibles.append(op)
-    op = nouvel_operateur(
-        "move up bloc n°"+str(bloc.codage), partial(Blocs.precond_up, bloc), partial(Blocs.move_up, bloc))
-    operateurs_disponibles.append(op)
-    op = nouvel_operateur(
-        "move left bloc n°"+str(bloc.codage), partial(Blocs.precond_left, bloc), partial(Blocs.move_left, bloc))
-    operateurs_disponibles.append(op)
-    op = nouvel_operateur(
-        "move right bloc n°"+str(bloc.codage), partial(Blocs.precond_right, bloc), partial(Blocs.move_right, bloc))
-    operateurs_disponibles.append(op)
+# Initialisation du Timer
+start = time.time() 
 
+# Lancement de la resolution
+# solution = recherche_en_profondeur_memoire(Blocs.initial, partial(est_final, len(empty_board)), operateurs_disponibles, [])
+solution = recherche_en_profondeur_limitee(Blocs.initial, partial(est_final, len(empty_board)), operateurs_disponibles, 14)
+# solution = recherche_en_largeur(Blocs.initial, partial(est_final, len(empty_board)), operateurs_disponibles, [], False)
 
-start = time.time()  # Initialisation du Timer
+# Arret du Timer
+end = time.time()   
 
-# Executions de la resolution
-# solution = recherche_en_profondeur_limitee(
-#     Blocs.initial, partial(est_final, len(empty_board)), operateurs_disponibles, 9)
-# solution = (recherche_en_profondeur_memoire(
-#     Blocs.initial, partial(est_final, len(empty_board)), operateurs_disponibles, []))
-solution = recherche_en_largeur(
-    Blocs.initial, partial(est_final, len(empty_board)), operateurs_disponibles, [], False)
-
-end = time.time()  # Arret du Timer 
-
-# Affichage de la resolution
+# Affichage graphique de la solution
 show_result(solution, Blocs.initial)
-# print(Blocs.initial)
-# show(fill_board(Blocs.initial))
+
