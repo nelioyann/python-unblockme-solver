@@ -35,16 +35,16 @@ def est_final(board_size, e):
 def show(plateau):
     # Palette de couleur utilisee pour differencier les blocs
     palette = ["red", "yellow", "blue", "green", "grey", "magenta", "cyan", "white"] 
-    print("- - -" + " -"*len(plateau)) 
+    print("- -" + " -"*len(plateau)) 
     for line in plateau:
-        print("| ", end=" ")
+        print("|", end=" ")
         for element in line:
             if element == "●":
                 print(" ", end=" ")
             else: # Si l'element est un chiffre
                 cprint("●", palette[element], attrs=['bold'], end=" ")
-        print(" |")
-    print("- - -" + " -"*len(plateau))
+        print("|")
+    print("- -" + " -"*len(plateau))
 
 # Renvoie une copie de e
 def copie(e):
@@ -74,19 +74,23 @@ def show_result(solution, e):
         system("cls")
         show(fill_board(e))
         print("Etat Initial")
-        input()
+        # input()
         time.sleep(2)
         for mouvement in solution:
             system("cls")
             e = mouvement(e) # Produit un nouvel etat
             states.append(e)
             show(fill_board(e)) # Affiche le plateau
-            # time.sleep(0.5)
+            time.sleep(0.5)
         print(f"Temps mis: {(end - start)*1000} ms")
         print(f"Solution en {len(solution)} coups")
+        reps = False
         for etat in states:
             if states.count(etat) != 1:
-                print(f"Etat: {etat} se repete")
+                reps = True
+                
+        if reps:
+            print(f"Au moins un etat se repete")
     else:
         print("Pas de solution")
 
@@ -226,8 +230,6 @@ Blocs([1, 2, 2, 2])
 Blocs([4, 1, 4, 2])
 Blocs([2, 3, 2, 4])
 Blocs([0, 4, 1, 4])
-Blocs([0, 3, 1, 3])
-Blocs([2, 1, 3, 1])
 
 # Creation des operateurs pour les blocs initialises
 operateurs_disponibles = make_operateurs(Blocs.obstacles)
@@ -237,8 +239,8 @@ start = time.time()
 
 # Lancement de la resolution
 # solution = recherche_en_profondeur_memoire(Blocs.initial, partial(est_final, len(empty_board)), operateurs_disponibles, [])
-solution = recherche_en_profondeur_limitee(Blocs.initial, partial(est_final, len(empty_board)), operateurs_disponibles, 14)
-# solution = recherche_en_largeur(Blocs.initial, partial(est_final, len(empty_board)), operateurs_disponibles, [], False)
+# solution = recherche_en_profondeur_limitee(Blocs.initial, partial(est_final, len(empty_board)), operateurs_disponibles, 14)
+solution = recherche_en_largeur(Blocs.initial, partial(est_final, len(empty_board)), operateurs_disponibles, [], False)
 
 # Arret du Timer
 end = time.time()   
